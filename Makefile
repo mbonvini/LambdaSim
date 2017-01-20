@@ -9,6 +9,11 @@ PIP=$(VENV_DIR)/bin/pip
 PROFILE=marco
 AWS=$(VENV_DIR)/bin/aws --profile=$(PROFILE)
 APP_DIR=./sample_app
+APP_CONFIG_FILE=$(APP_DIR)/config.json
+VENV_ZIP=LambdaFmiVenvPython27.zip
+VENV_ZIP_URL=https://s3-us-west-2.amazonaws.com/lambda-sim/$(VENV_ZIP)
+APP_ZIP_NAME=LambdaSimApp.zip
+LAMBDA_FUNCTION=lambda_function.py
 
 all: help
 .PHONY: all
@@ -40,6 +45,13 @@ copy_fmu: ## Copies the FMU to S3
 remove: ## Remove the dependencies installed to run this tool
 	rm -rf $(VENV_DIR)
 .PHONY: remove
+
+
+build_app: ## Builds the zip file that contains the lambda function
+	if [ ! -f "./$(VENV_ZIP)" ]; then wget $(VENV_ZIP_URL); fi
+	cp ./$(VENV_ZIP) $(APP_ZIP_NAME)
+	zip -g $(APP_ZIP_NAME) $(LAMBDA_FUNCTION)
+	zip -g $(APP_ZIP_NAME) $(APP_CONFIG_FILE)
 
 
 help: ## This help dialog.

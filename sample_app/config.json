@@ -1,0 +1,21 @@
+{
+  "lambda":{
+    "function_name": "hello_world",
+    "timeout": 60
+  },
+  "model":{
+    "solver": "CVode",
+    "tolerance": 0.00001,
+    "max_sim_time": 10000.0,
+    "min_sim_time": 0.0,
+    "n_points": {"default": 500, "min":300, "max":1000},
+    "params": {
+      "whitelist": null,
+      "blacklist": null
+    },
+    "variables": {
+      "whitelist": null,
+      "blacklist": null
+    }
+  }
+}
