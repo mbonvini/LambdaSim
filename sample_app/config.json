@@ -4,6 +4,7 @@
     "timeout": 60
   },
   "model":{
+    "fmu_name": "HelloWorld.fmu",
     "solver": "CVode",
     "tolerance": 0.00001,
     "max_sim_time": 10000.0,
