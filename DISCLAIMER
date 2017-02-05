@@ -1,0 +1,22 @@
+## Disclaimer
+
+λ-Sim allows to create a REST API implemented on top of
+Amazon Web Services (AWS) such as
+- lambda
+- apigateway,
+- S3,
+- cloudwatch
+
+**YOU MAY ENCOUNTER EXPENSES WHEN USING AWS SERVICE**
+
+> By default λ-Sim makes your model open to the public, anyone will be able to
+> access your model and therefore your account will
+> be charged for the use of AWS services and resources required to serve the
+> requests. I suggest you to carefully read and review AWS charges and policies.
+> **The author/s of this project are not responsible in any way for the use and
+> charges of the AWS services on your and any third-party account.
+> USE THIS PROJECT AT YOUR OWN RISK!
+
+If you're interested in limiting access to the REST API please have a
+look at the AWS documentation
+[apigateway-control-access-to-api](http://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-control-access-to-api.html)

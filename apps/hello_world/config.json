@@ -1,7 +1,17 @@
 {
+  "aws":{
+    "account": 756048602902,
+    "region": "us-west-2"
+  },
   "lambda":{
     "function_name": "hello_world",
-    "timeout": 60
+    "timeout": 60,
+    "description": "A simple function that simulates a first order model",
+    "memory_size": 128
+  },
+  "api": {
+    "name": "hello_world_rest_api",
+    "description": "An API gateway for lambda function hello_world"
   },
   "model":{
     "fmu_name": "HelloWorld.fmu",

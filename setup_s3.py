@@ -7,6 +7,7 @@ import re
 import argparse
 
 BUCKET_PREFIX = "lambda-sim"
+DEFAULT_AWS_REGION = "us-west-2"
 
 def random_bucket_name(prefix=BUCKET_PREFIX, size=8):
     size = 8
@@ -14,7 +15,27 @@ def random_bucket_name(prefix=BUCKET_PREFIX, size=8):
     rnd_str = ''.join(random.choice(chars) for _ in range(size))
     return "{}-{}".format(prefix, rnd_str)
 
-def create_bucket(prefix=BUCKET_PREFIX, profile_name=None):
+def get_bucket_names(prefix=BUCKET_PREFIX, profile_name=None):
+    """
+    This function returns the name of the S3 bucket where
+    the FMU are saved.
+
+    :param str prefix: The prefix for the S3 bucket.
+    :param str profile_name: The profile to use from the AWS
+      confign file.
+    :rtype: list[str]
+    :return: The function returns a list of bucket names that have the
+      prexix `BUCKET_PREFIX` that could be used to store FMUs.
+    """
+    session = boto3.Session(profile_name=profile_name)
+    s3 = session.resource('s3')
+
+    regex = r'{}-[a-z0-9]+'.format(prefix)
+    buckets = [bucket.name for bucket in s3.buckets.all() if re.match(regex, bucket.name)]
+
+    return buckets
+
+def create_bucket(prefix=BUCKET_PREFIX, profile_name=None, region_name=DEFAULT_AWS_REGION):
     """
     This function creates a bucket with a specified prefix
     that will contain the FMU models.
@@ -24,19 +45,23 @@ def create_bucket(prefix=BUCKET_PREFIX, profile_name=None):
     :param str prefix: The prefix for the S3 bucket.
     :param str profile_name: The profile to use from the AWS
       confign file.
+    :param str region_name: AWS region when creating the new bucket.
     :rtype: str
     :return: The function returns the name of the bucket where
       storing the FMU models.
     """
-    session = boto3.Session(profile_name=profile_name)
+    session = boto3.Session(profile_name=profile_name, region_name=region_name)
     s3 = session.resource('s3')
-
-    regex = r'{}-[a-z0-9]+'.format(prefix)
-    buckets = [bucket.name for bucket in s3.buckets.all() if re.match(regex, bucket.name)]
+    buckets = get_bucket_names(BUCKET_PREFIX, profile_name)
 
     if len(buckets) == 0:
         bucket_name = random_bucket_name()
-        s3.create_bucket(Bucket=bucket_name)
+        s3.create_bucket(
+            Bucket=bucket_name,
+            CreateBucketConfiguration=dict(
+                LocationConstraint=region_name
+            )
+        )
         print "Created S3 bucket {}".format(bucket_name)
     elif len(buckets) == 1:
         bucket_name = buckets[0]
@@ -127,6 +152,10 @@ if __name__ == "__main__":
         nargs='?', help="Create a S3 bucket for storing FMUs")
 
     parser.add_argument(
+        '-n', '--get_name', const=True, default=False,
+        nargs='?', help="Get the name of the S3 buckets that stores the FMUs")
+
+    parser.add_argument(
         '-d', '--delete', const=True, default=False,
         nargs='?', help="Delete the S3 bucket that stores the FMUs")
 
@@ -142,15 +171,46 @@ if __name__ == "__main__":
         help="The name of the AWS IAM profile to use (see ~/.aws/credentials)"
     )
 
+    parser.add_argument(
+        '-r', '--region', default=DEFAULT_AWS_REGION,
+        type=str, nargs='?',
+        help="The name of the AWS region (by default us-west-2)"
+    )
+
     args = parser.parse_args()
 
-    if args.create:
-        create_bucket(BUCKET_PREFIX, profile_name=args.profile)
+    if args.get_name:
+        buckets = get_bucket_names(
+            BUCKET_PREFIX,
+            profile_name=args.profile
+        )
+        if len(buckets) == 0:
+            sys.exit("No buckets")
+        elif len(buckets) == 1:
+            sys.stdout.write(buckets[0])
+        else:
+            sys.exit("More than one S3 bucket, please remove one")
+
+    elif args.create:
+        create_bucket(
+            BUCKET_PREFIX,
+            profile_name=args.profile,
+            region_name=args.region
+        )
+
     elif args.delete:
-        delete_bucket(prefix=BUCKET_PREFIX, profile_name=args.profile)
+        delete_bucket(
+            prefix=BUCKET_PREFIX,
+            profile_name=args.profile
+        )
+
     elif args.copy:
-        bucket_name = create_bucket(BUCKET_PREFIX, profile_name=args.profile)
+        bucket_name = create_bucket(
+            BUCKET_PREFIX,
+            profile_name=args.profile
+        )
         copy_fmu(args.copy, bucket_name, profile_name=args.profile)
+
     else:
         parser.print_help()
 
