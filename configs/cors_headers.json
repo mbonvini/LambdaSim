@@ -1,0 +1,3 @@
+{
+    "method.response.header.Access-Control-Allow-Origin": "'*'"
+}
