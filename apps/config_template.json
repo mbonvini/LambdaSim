@@ -1,6 +1,5 @@
 {
   "aws":{
-    "account": <int: YOUR ACCOUNT ID>,
     "region": "<AWS REGION WHERE THE FUNCTION AND ITS API ARE DEPLOYED>"
   },
   "lambda":{

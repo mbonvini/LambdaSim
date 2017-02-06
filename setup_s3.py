@@ -6,7 +6,7 @@ import boto3
 import re
 import argparse
 
-BUCKET_PREFIX = "lambda-sim"
+BUCKET_PREFIX = "lambda-simulation"
 DEFAULT_AWS_REGION = "us-west-2"
 
 def random_bucket_name(prefix=BUCKET_PREFIX, size=8):

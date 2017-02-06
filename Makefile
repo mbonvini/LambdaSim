@@ -10,8 +10,7 @@ VENV_DIR=$(CURDIR)/venv
 PYTHON=$(VENV_DIR)/bin/python
 PIP=$(VENV_DIR)/bin/pip
 
-PROFILE=marco
-AWS_REGION=us-west-2
+PROFILE=default
 AWS=$(VENV_DIR)/bin/aws --profile=$(PROFILE)
 
 APP_DIR=$(CURDIR)/apps/hello_world
@@ -39,6 +38,19 @@ INTEGRATION_OPTIONS_RESPONSE=file://configs/integration_options_response.json
 CORS_HEADERS=file://configs/cors_headers.json
 SWAGGER_API_TEMPLATE=$(CURDIR)/templates/swagger_api_template.json
 
+# Access the data in the config file associated to the app
+#-- Account
+ACCOUNT_ID := $(shell aws --profile=marco iam list-users | jq '.Users[0].Arn / ":" | .[4]' | sed 's/^"\(.*\)".*/\1/')
+AWS_REGION := $(shell more $(PATH_CONFIG_FILE) | jq '.aws.region' | sed 's/^"\(.*\)".*/\1/')
+#-- Lambda
+FUNCTION_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.function_name' | sed 's/^"\(.*\)".*/\1/')
+DESCRIPTION := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.description')
+TIMEOUT := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.timeout')
+MEMORY_SIZE := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.memory_size')
+#-- Apigateway
+API_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.api.name')
+API_DESCRIPTION := $(shell more $(PATH_CONFIG_FILE) | jq '.api.description')
+
 define random_uuid
 $(shell ./venv/bin/python -c "import sys,uuid; sys.stdout.write(uuid.uuid4().hex)" | pbcopy && pbpaste && echo)
 endef
@@ -56,12 +68,14 @@ install: ## Install the dependencies needed to run this tool
 
 
 uninstall: ## Remove the virtual environment
-	rm -rf ./venv
+	rm -rf $(VENV_DIR)
 .PHONY: uninstall
 
 
 create_bucket: ## Create the bucket that stores the FMUs
-	$(PYTHON) setup_s3.py --create --profile $(PROFILE)
+	$(PYTHON) setup_s3.py --create \
+	--profile $(PROFILE) \
+	--region $(AWS_REGION)
 .PHONY: create_bucket
 
 
@@ -75,14 +89,9 @@ delete_bucket: ## Delete the bucket that stores the FMUs
 .PHONY: delete_bucket
 
 
-copy_fmu: ## Copies the FMU to S3
+copy_fmu: create_bucket ## Copies the FMU to S3
 	$(PYTHON) setup_s3.py --copy $(APP_DIR) --profile $(PROFILE)
 .PHONY: copy_fmu
-
-
-remove: ## Remove the dependencies installed to run this tool
-	rm -rf $(VENV_DIR)
-.PHONY: remove
 
 
 build_app: ## Builds the zip file that contains the lambda function
@@ -93,10 +102,7 @@ build_app: ## Builds the zip file that contains the lambda function
 .PHONY: build_app
 
 
-create_logs_role: ## Create the IAM role specific for the log 
-	$(eval ACCOUNT_ID := $(shell more $(PATH_CONFIG_FILE) | jq '.aws.account'))
-	$(eval AWS_REGION := $(shell more $(PATH_CONFIG_FILE) | jq '.aws.region' | sed 's/^"\(.*\)".*/\1/'))
-	$(eval FUNCTION_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.function_name' | sed 's/^"\(.*\)".*/\1/'))
+create_logs_role: ## Create the IAM role specific for the log
 	more $(IAM_ROLE_ACCESS_LOGS_POLICY_DOCUMENT_TEMPLATE) | jq '\
 	.Statement[0].Resource = "arn:aws:logs:$(AWS_REGION):$(ACCOUNT_ID):*" | \
 	.Statement[1].Resource[0] = "arn:aws:logs:$(AWS_REGION):$(ACCOUNT_ID):log-group:/aws/lambda/$(FUNCTION_NAME):*"' \
@@ -105,7 +111,6 @@ PHONY: create_logs_role
 
 
 create_iam_role: create_logs_role ## Create the IAM role (valid for a specific lambda function)
-	$(eval FUNCTION_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.function_name' | sed 's/^"\(.*\)".*/\1/'))
 	$(AWS) iam create-role \
 	--role-name $(IAM_ROLE_NAME)-$(FUNCTION_NAME) \
 	--assume-role-policy-document file://$(IAM_ROLE_ASSUME_POLICY_DOCUMENT) \
@@ -121,16 +126,11 @@ create_iam_role: create_logs_role ## Create the IAM role (valid for a specific l
 .PHONY: create_iam_role
 
 
-deploy_app: build_app ## Create the lambda function by uploading the zip file
-	$(eval FUNCTION_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.function_name'))
-	$(eval DESCRIPTION := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.description'))
-	$(eval TIMEOUT := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.timeout'))
-	$(eval MEMORY_SIZE := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.memory_size'))
+create_function: copy_fmu build_app create_iam_role ## Create the lambda function by uploading the zip file
 	$(eval IAM_ROLE_ARN := $(shell more $(APP_DIR)/role_profile.json | jq '.Role.Arn'))
 	$(eval BUCKET_NAME := $(shell $(PYTHON) setup_s3.py --get_name --profile $(PROFILE)))
-	$(eval AWS_REGION := $(shell more $(PATH_CONFIG_FILE) | jq '.aws.region' | sed 's/^"\(.*\)".*/\1/'))
 	$(AWS) lambda create-function \
-	--region $(REGION) \
+	--region $(AWS_REGION) \
 	--function-name $(FUNCTION_NAME) \
 	--runtime python2.7 \
 	--role $(IAM_ROLE_ARN) \
@@ -141,218 +141,77 @@ deploy_app: build_app ## Create the lambda function by uploading the zip file
 	--zip-file fileb://$(APP_ZIP_NAME) \
 	--environment '{"Variables": {"USER": "ec2-user", "LS_LOG_LEVEL": $(LS_LOG_LEVEL), "S3_FMU_BUCKET_NAME": "$(BUCKET_NAME)"}}' \
 	> $(APP_DIR)/lambda_function.json
-.PHONY: deploy_app
+.PHONY: create_function
 
 
-create_api: ## Create a REST API using APIgateway
-	$(eval API_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.api.name'))
-	$(eval API_DESCRIPTION := $(shell more $(PATH_CONFIG_FILE) | jq '.api.description'))
-	
-	$(AWS) apigateway create-rest-api \
-	--name	$(API_NAME) \
-	--description $(API_DESCRIPTION) > $(APP_DIR)/rest_api.json
-.PHONY: create_api
 
+prepare_api_spec:
+	$(PYTHON) ./generate_api_template.py \
+	$(APP_DIR)/lambda_function.json \
+	$(APP_DIR)/rest_api_spec.json
 
-get_root_resource_id: ## Get the REST root resource
-	$(eval REST_API_ID := $(shell more $(APP_DIR)/rest_api.json | jq '.id'))
-	$(AWS) apigateway get-resources \
-	--rest-api-id $(REST_API_ID) > $(APP_DIR)/resources.json
-.PHONY: get_resource_id
-
-
-create_resource: get_root_resource_id ## Create the main resource named as the lambda function
-	$(eval ROOT_RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.path == "/") | .id'))
-	$(eval FUNCTION_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.function_name'))
-	$(AWS) apigateway create-resource \
-	--rest-api-id $(REST_API_ID) \
-	--parent-id $(ROOT_RESOURCE_ID) \
-	--path-part $(FUNCTION_NAME)
-
-get_resource_id: get_root_resource_id ## Get the resource id of the "/" and of "/<lambda_function_name>"
-	$(eval REST_API_ID := $(shell more $(APP_DIR)/rest_api.json | jq '.id' | sed 's/^"\(.*\)".*/\1/'))
-	$(eval ROOT_RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.path == "/") | .id'))
-	$(eval RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.parentId == $(ROOT_RESOURCE_ID)) | .id'))
-
-create_methods: get_resource_id ## Create the HTTP methods GET, POST and OPTIONS
-	$(AWS) apigateway put-method \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method GET \
-	--authorization-type NONE \
-	--request-parameters '{}' \
-	--no-api-key-required > $(APP_DIR)/get_method.json
-
-	$(AWS) apigateway put-method \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method POST \
-	--authorization-type NONE \
-	--request-parameters '{}' \
-	--no-api-key-required > $(APP_DIR)/post_method.json
-
-	$(AWS) apigateway put-method \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method OPTIONS \
-	--authorization-type NONE \
-	--request-parameters '{}' \
-	--no-api-key-required > $(APP_DIR)/options_method.json
-.PHONY: create_methods
-
+submit_api_spec: prepare_api_spec
+	$(AWS) apigateway import-rest-api \
+	--region $(AWS_REGION) \
+	--body file://$(APP_DIR)/rest_api_spec.json > $(APP_DIR)/rest_api.json
 
 get_function_arn_uri: ## Get the ARN and URI of the lambda function
 	$(eval FUNCTION_ARN := $(shell more $(APP_DIR)/lambda_function.json | jq '.FunctionArn' | sed 's/^"\(.*\)".*/\1/'))
 	$(eval FUNCTION_URI := arn:aws:apigateway:$(AWS_REGION):lambda:path/2015-03-31/functions/$(FUNCTION_ARN)/invocations)
 .PHONY: get_function_arn_uri
 
-
-configure_get_method: get_resource_id get_function_arn_uri ## Configure the integration and the responses for the GET method
-	$(AWS) apigateway put-integration \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method GET \
-	--integration-http-method POST \
-	--type AWS_PROXY \
-	--uri $(FUNCTION_URI) \
-	--passthrough-behavior WHEN_NO_MATCH \
-	--cache-namespace $(RESOURCE_ID) \
-	--cache-key-parameters '[]' \
-	--content-handling CONVERT_TO_TEXT
-
-	$(AWS) apigateway put-method-response \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method GET \
-	--status-code 200 \
-	--response-models '{"application/json": "Empty"}' \
-	--response-parameters '{"method.response.header.Access-Control-Allow-Origin": false}'
-
-	$(AWS) apigateway put-integration-response \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method GET \
-	--status-code 200 \
-	--response-templates '{"application/json": ""}' \
-	--response-parameters $(CORS_HEADERS)
-.PHONY: configure_get_method
+get_root_resource_id: ## Get the REST root resource
+	$(eval REST_API_ID := $(shell more $(APP_DIR)/rest_api.json | jq '.id'))
+	$(AWS) apigateway get-resources \
+	--region $(AWS_REGION) \
+	--rest-api-id $(REST_API_ID) > $(APP_DIR)/resources.json
+.PHONY: get_resource_id
 
 
-configure_post_method: get_resource_id get_function_arn_uri ## Configure the integration and the responses for the POST method
-	$(AWS) apigateway put-integration \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method POST \
-	--integration-http-method POST \
-	--type AWS_PROXY \
-	--uri $(FUNCTION_URI) \
-	--passthrough-behavior WHEN_NO_MATCH \
-	--cache-namespace $(RESOURCE_ID) \
-	--cache-key-parameters '[]' \
-	--content-handling CONVERT_TO_TEXT
-
-	$(AWS) apigateway put-method-response \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method POST \
-	--status-code 200 \
-	--response-models '{"application/json": "Empty"}' \
-	--response-parameters '{"method.response.header.Access-Control-Allow-Origin": false}'
-
-	$(AWS) apigateway put-integration-response \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method POST \
-	--status-code 200 \
-	--response-templates '{"application/json": ""}' \
-	--response-parameters $(CORS_HEADERS)
-.PHONY: configure_post_method
+get_resource_id: get_root_resource_id ## Get the resource id of the "/" and of "/<lambda_function_name>"
+	$(eval REST_API_ID := $(shell more $(APP_DIR)/rest_api.json | jq '.id' | sed 's/^"\(.*\)".*/\1/'))
+	$(eval ROOT_RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.path == "/") | .id'))
+	$(eval RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.parentId == $(ROOT_RESOURCE_ID)) | .id'))
+.PHONY: get_resource_id
 
 
-configure_options_method: get_resource_id get_function_arn_uri ## Configure the integration and the responses for the OPTIONS method
-	$(AWS) apigateway put-integration \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method OPTIONS \
-	--type MOCK \
-	--passthrough-behavior WHEN_NO_MATCH \
-	--cache-namespace $(RESOURCE_ID) \
-	--cache-key-parameters '[]' \
-	--request-templates '{"application/json": "{\"statusCode\": 200}"}'
-
-	$(AWS) apigateway put-method-response \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method OPTIONS \
-	--status-code 200 \
-	--response-parameters $(METHOD_OPTIONS_RESPONSE) \
-	--response-models '{"application/json": "Empty"}'
-
-	$(AWS) apigateway put-integration-response \
-	--rest-api-id $(REST_API_ID) \
-	--resource-id $(RESOURCE_ID) \
-	--http-method OPTIONS \
-	--status-code 200 \
-	--response-parameters $(INTEGRATION_OPTIONS_RESPONSE) \
-	--response-template '{"application/json": ""}'
-.PHONY: configure_options_method
-
-deploy_api: get_resource_id
-	$(AWS) apigateway create-deployment \
-	--rest-api-id $(REST_API_ID) \
-	--stage-name prod \
-	--description "Deploy to production stage" > $(APP_DIR)/deployed.json
-
-prepare_api_spec: get_function_arn_uri
-	$(eval FUNCTION_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.function_name' | sed 's/^"\(.*\)".*/\1/'))
-	more $(SWAGGER_API_TEMPLATE) | \
-	jq '.paths["/hello_world"]["x-amazon-apigateway-any-method"]["x-amazon-apigateway-integration"].uri = "$(FUNCTION_URI)" | \
-	.info.title = "$(FUNCTION_NAME)"' \
-	> $(APP_DIR)/rest_api_spec.json
-
-prepare_api_spec_new:
-	$(PYTHON) ./generate_api_template.py \
-	$(APP_DIR)/lambda_function.json \
-	$(APP_DIR)/rest_api_spec.json
-
-submit_api_spec:
-	$(AWS) apigateway import-rest-api \
-	--body file://$(APP_DIR)/rest_api_spec.json > $(APP_DIR)/rest_api.json
-
-
-enable_api: get_function_arn_uri get_resource_id
-	$(eval ACCOUNT_ID := $(shell more $(PATH_CONFIG_FILE) | jq '.aws.account' | sed 's/^"\(.*\)".*/\1/'))
-	$(eval AWS_REGION := $(shell more $(PATH_CONFIG_FILE) | jq '.aws.region' | sed 's/^"\(.*\)".*/\1/'))
-	$(eval FUNCTION_NAME := $(shell more $(PATH_CONFIG_FILE) | jq '.lambda.function_name' | sed 's/^"\(.*\)".*/\1/'))
+enable_api: get_function_arn_uri get_resource_id ## Enable the lambda function to be called by API Gateway
 	$(AWS) lambda add-permission \
+	--region $(AWS_REGION) \
 	--function-name $(FUNCTION_ARN) \
 	--source-arn 'arn:aws:execute-api:$(AWS_REGION):$(ACCOUNT_ID):$(REST_API_ID)/*/*/$(FUNCTION_NAME)' \
 	--principal apigateway.amazonaws.com \
 	--statement-id $(call random_uuid) \
 	--action lambda:InvokeFunction
 	$(AWS) lambda add-permission \
+	--region $(AWS_REGION) \
 	--function-name $(FUNCTION_ARN) \
 	--source-arn 'arn:aws:execute-api:$(AWS_REGION):$(ACCOUNT_ID):$(REST_API_ID)/prod/ANY/$(FUNCTION_NAME)' \
 	--principal apigateway.amazonaws.com \
 	--statement-id $(call random_uuid) \
 	--action lambda:InvokeFunction
+.PHONY: enable_api
 
 
-help: ## This help dialog.
-	@IFS=$$'\n' ; \
-	help_lines=(`fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//'`); \
-	for help_line in $${help_lines[@]}; do \
-		IFS=$$'#' ; \
-		help_split=($$help_line) ; \
-		help_command=`echo $${help_split[0]} | sed -e 's/^ *//' -e 's/ *$$//'` ; \
-		help_info=`echo $${help_split[2]} | sed -e 's/^ *//' -e 's/ *$$//'` ; \
-		printf "%-30s %s\n" $$help_command $$help_info ; \
-	done
+deploy_api: get_resource_id ## Deploy the API
+	$(AWS) apigateway create-deployment \
+	--region $(AWS_REGION) \
+	--rest-api-id $(REST_API_ID) \
+	--stage-name prod \
+	--description "Deploy API to production stage" > $(APP_DIR)/deployed.json
+.PHONY: deploy_api
+
+
+expose_function: submit_api_spec enable_api deploy_api ## Exposes the lambda function via API Gateway
+.PHONY: expose_function
+
+
+get_url: get_resource_id ## Get the URL of the API gateway API endpoint
+	@echo The URL of the API is:
+	@echo https://$(REST_API_ID).execute-api.$(AWS_REGION).amazonaws.com/prod/$(FUNCTION_NAME)
+.PHONY: get_url
+
+
+help: ## Show this help message
+	@perl -nle'print $& if m{^[a-zA-Z_-]+:.*?## .*$$}' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
-
-
-
-# curl -H 'x-api-key: xxx' \
--v https://veg94dkn94.execute-api.us-west-2.amazonaws.com/prod/hello_world
-#curl -H 'x-api-key: xxx' \
--X POST https://veg94dkn94.execute-api.us-west-2.amazonaws.com/prod/hello_world

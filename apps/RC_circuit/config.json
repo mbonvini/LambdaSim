@@ -1,19 +1,15 @@
 {
   "aws":{
-    "region": "us-west-2"
+    "region": "us-west-1"
   },
   "lambda":{
-    "function_name": "hello_world",
+    "function_name": "rc_circuit",
     "timeout": 60,
-    "description": "A simple function that simulates a first order model",
-    "memory_size": 128
-  },
-  "api": {
-    "name": "hello_world_rest_api",
-    "description": "An API gateway for lambda function hello_world"
+    "description": "A simple function that simulates an RC circuit",
+    "memory_size": 256
   },
   "model":{
-    "fmu_name": "HelloWorld.fmu",
+    "fmu_name": "SimpleElectrical_Examples_RC.fmu",
     "solver": "CVode",
     "tolerance": 0.00001,
     "max_sim_time": 10000.0,
