@@ -1,6 +1,7 @@
 # λ-Sim
 Convert simulation models to REST APIs
 
+![λ-Sim Schematic diagram](https://github.com/mbonvini/LambdaSim/raw/master/images/diagram.png)
 
 ## Disclaimer
 
