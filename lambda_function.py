@@ -1,5 +1,11 @@
+"""
+This module contains the source code of the lambda
+function that is deployed on AWS and processes the
+HTTP requests forwarded by API gateway.
+"""
 from __future__ import print_function
 import os
+import copy
 import logging
 import json
 import re
@@ -21,6 +27,7 @@ GET = "GET"
 POST = "POST"
 STATUS_OK = "200"
 STATUS_NO_ACCESS = "400"
+STATUS_BAD_REQUEST = "400"
 STATUS_NOT_FOUND = "404"
 INTERNAL_ERROR = "500"
 
@@ -30,6 +37,7 @@ S3_FMU_BUCKET_NAME = "S3_FMU_BUCKET_NAME"
 
 # event keywords
 HTTP_METHOD = "httpMethod"
+BODY = "body"
 
 # config dict keywords
 MODEL = "model"
@@ -43,7 +51,7 @@ if LOG_LEVEL in os.environ:
         log_level = int(os.environ[LOG_LEVEL])
         if log_level >= 0 and log_level <= 50:
             LEVEL = log_level
-    except Exception, e:
+    except (ValueError, KeyError) as e:
         print(str(e))
 
 logging.basicConfig(
@@ -120,14 +128,48 @@ from pyfmi import load_fmu
 logging.info("Load FMU model {}".format(LOCAL_FMU_PATH))
 model = load_fmu(LOCAL_FMU_PATH, enable_logging=False, log_file_name=FMU_LOG_FILE)
 
+try:
+    MIN_SIM_TIME = float(app_config["simulation_time"]["min"])
+except (KeyError, ValueError) as err:
+    MIN_SIM_TIME = 0.0
+
+try:
+    MAX_SIM_TIME = float(app_config["simulation_time"]["max"])
+except (KeyError, ValueError) as err:
+    MAX_SIM_TIME = 10000.0
+
+try:
+    N_POINTS = int(app_config["n_points"]["default"])
+except (KeyError, ValueError) as err:
+    N_POINTS = 500
+
+try:
+    N_POINTS_MIN = int(app_config["n_points"]["min"])
+except (KeyError, ValueError) as err:
+    N_POINTS_MIN = 300
+
+try:
+    N_POINTS_MAX = int(app_config["n_points"]["max"])
+except (KeyError, ValueError) as err:
+    N_POINTS_MAX = 1000
+
+DEFAULT_OPTIONS = model.simulate_options()
+DEFAULT_OPTIONS = dict(ncp=N_POINTS)
+if "options" in app_config:
+    DEFAULT_OPTIONS.update(app_config["options"])
+
 
 class ErrorMessage(object):
-    """Class representing an HTTP error with code and message"""
+    """Class representing an HTTP error with code and message."""
 
     def __init__(self, code=None, msg=""):
         """Init Error message object"""
         self.code = code
-        self.message = msg 
+        self.message = msg
+
+    def dumps(self):
+        """Return JSON string containing error code and message."""
+        return json.dumps(dict(code=self.code, error_message=self.message))
 
 
 def respond(err, res="", content_type=APPLICATION_JSON):
@@ -137,7 +179,7 @@ def respond(err, res="", content_type=APPLICATION_JSON):
     """
     return {
         'statusCode': STATUS_OK if err is None else err.code,
-        'body': err.message if err else res,
+        'body': err.dumps() if err else res,
         'headers': {
             'Content-Type': content_type,
         },
@@ -146,6 +188,10 @@ def respond(err, res="", content_type=APPLICATION_JSON):
 def get_handler():
     """
     This function handles HTTP GET requests.
+
+    @TODO: Add query parameter that returns
+    - JSON default simulation options
+    - JSON function config
     """
     with open(LOCAL_FMU_DESCRIPTION_FILE, "r") as xml_file:
         return respond(None, xml_file.read(), content_type=APPLICATION_XML)
@@ -156,8 +202,95 @@ def get_handler():
 def post_handler(event, context):
     """
     This function handles HTTP POST requests.
+    A POST request represents a request to run a simulation.
+
+    The content of the POST request that is for example submitted
+    with the following curl command
+    ::
+
+      curl -H "Content-Type: application/json" \
+      -X POST -d '{"start_time":0.0,"final_time":10.0}' \
+      https://<api_id>.execute-api.us-west-2.amazonaws.com/prod/<function_name>
+
+    is available under the ``body`` of the ``event`` dictionary.
     """
-    return respond(None, json.dumps({}))
+    # Parse the body of the HTTP request
+    body = json.loads(event[BODY])
+
+    # Validate the ``start_time``
+    try:
+        start_time = float(body["start_time"])
+        if start_time < MIN_SIM_TIME or start_time > MIN_SIM_TIME:
+            raise ValueError()
+    except KeyError:
+        return respond(ErrorMessage(STATUS_BAD_REQUEST, "Missing parameter 'start_time'"))
+    except ValueError:
+        msg = (
+            "Invalid parameter value 'start_time'={0}. "
+            "It must be between [{1}, {2}]."
+        ).format(
+            body["start_time"], MIN_SIM_TIME, MAX_SIM_TIME
+        )
+        return respond(ErrorMessage(STATUS_BAD_REQUEST, msg))
+
+    # Validate the ``final_time``
+    try:
+        final_time = float(body["final_time"])
+        if final_time < MIN_SIM_TIME or final_time > MAX_SIM_TIME:
+            raise ValueError()
+    except KeyError:
+        return respond(ErrorMessage(STATUS_BAD_REQUEST, "Missing parameter 'final_time'"))
+    except ValueError:
+        msg = (
+            "Invalid parameter value 'final_time'={0}. "
+            "It must be between [{1}, {2}]."
+        ).format(
+            body["final_time"], MIN_SIM_TIME, MAX_SIM_TIME
+        )
+        return respond(ErrorMessage(STATUS_BAD_REQUEST, msg))
+
+    # Verify the start and final time are consistent
+    if final_time <= start_time:
+        msg = "The parameter 'final_time'={} <= 'start_time'={}".format(
+            final_time, start_time
+        )
+        return respond(ErrorMessage(STATUS_BAD_REQUEST, msg))
+
+    # Try to set the options
+    opts = copy.copy(DEFAULT_OPTIONS)
+    if "options" in body:
+        opts.update(body["options"])
+
+    # Force the option that keeps the outputs in memory
+    opts["result_handling"] = "memory"
+
+    # @TODO: Set the model parameters
+    # @TODO: Set the states
+    # @TODO: Build an input matrix if needed
+    input_tuple = ()
+
+    # Simulate and reset
+    try:
+        res = model.simulate(
+            start_time=start_time,
+            final_time=final_time,
+            input=input_tuple,
+            options=opts
+        )
+        model.reset()
+    except Exception, e:
+        msg = "Internal error while simulating the model: {}".format(str(e))
+        return respond(ErrorMessage(INTERNAL_ERROR, msg))
+
+    # Convert result to a dictionary and then JSON (filter the protected variables that
+    # start with an underscore)
+    # @TODO: return single value for parameters and constants
+    # @TODO: add filter based on whitelist
+    result_dict = dict(
+        [("time", res["time"].tolist())] + \
+        [(k, res[k].tolist()) for k in res.keys() if k[0] != '_']
+    )
+    return respond(None, json.dumps(result_dict))
 
 def lambda_handler(event, context):
     """

@@ -144,6 +144,16 @@ create_function: copy_fmu build_app create_iam_role ## Create the lambda functio
 .PHONY: create_function
 
 
+update_function_code: build_app ## Command to update the code of an existing lambda function
+	$(eval IAM_ROLE_ARN := $(shell more $(APP_DIR)/role_profile.json | jq '.Role.Arn'))
+	$(eval BUCKET_NAME := $(shell $(PYTHON) setup_s3.py --get_name --profile $(PROFILE)))
+	$(AWS) lambda update-function-code \
+	--region $(AWS_REGION) \
+	--function-name $(FUNCTION_NAME) \
+	--zip-file fileb://$(APP_ZIP_NAME) \
+	> $(APP_DIR)/lambda_function.json
+.PHONY: redeploy_function
+
 
 prepare_api_spec:
 	$(PYTHON) ./generate_api_template.py \
