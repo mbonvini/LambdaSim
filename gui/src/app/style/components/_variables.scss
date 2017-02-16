@@ -1,0 +1,94 @@
+// ==========================================================================
+// Materialize variables
+// ==========================================================================
+//
+// Table of Contents:
+//
+//  1. Colors
+//  2. Badges
+//  3. Buttons
+//  4. Cards
+//  5. Collapsible
+//  6. Chips
+//  7. Date Picker
+//  8. Dropdown
+//  10. Forms
+//  11. Global
+//  12. Grid
+//  13. Navigation Bar
+//  14. Side Navigation
+//  15. Photo Slider
+//  16. Spinners | Loaders
+//  17. Tabs
+//  18. Tables
+//  19. Toasts
+//  20. Typography
+//  21. Footer
+//  22. Flow Text
+//  23. Collections
+//  24. Progress Bar
+
+
+
+// 1. Colors
+// ==========================================================================
+
+$primary-color: color("orange", "lighten-2") !default;
+$primary-color-light: lighten($primary-color, 15%) !default;
+$primary-color-dark: darken($primary-color, 15%) !default;
+
+$secondary-color: color("orange", "base") !default;
+$success-color: color("teal", "accent-3") !default;
+$error-color: color("red", "lighten-2") !default;
+$link-color: color("grey", "darken-4") !default;
+
+// 11. Global
+// ==========================================================================
+
+// Media Query Ranges
+$small-screen-up: 601px !default;
+$medium-screen-up: 993px !default;
+$large-screen-up: 1201px !default;
+$small-screen: 600px !default;
+$medium-screen: 992px !default;
+$large-screen: 1200px !default;
+
+$medium-and-up: "only screen and (min-width : #{$small-screen-up})" !default;
+$large-and-up: "only screen and (min-width : #{$medium-screen-up})" !default;
+$small-and-down: "only screen and (max-width : #{$small-screen})" !default;
+$medium-and-down: "only screen and (max-width : #{$medium-screen})" !default;
+$medium-only: "only screen and (min-width : #{$small-screen-up}) and (max-width : #{$medium-screen})" !default;
+
+
+// 12. Grid
+// ==========================================================================
+
+$num-cols: 12 !default;
+$gutter-width: 1.5rem !default;
+$element-top-margin: $gutter-width/3 !default;
+$element-bottom-margin: ($gutter-width*2)/3 !default;
+
+
+// 20. Typography
+// ==========================================================================
+
+$off-black: rgba(0, 0, 0, 0.87) !default;
+// Header Styles
+$h1-fontsize: 4.2rem !default;
+$h2-fontsize: 3.56rem !default;
+$h3-fontsize: 2.92rem !default;
+$h4-fontsize: 2.28rem !default;
+$h5-fontsize: 1.64rem !default;
+$h6-fontsize: 1rem !default;
+
+
+// 21. Footer
+// ==========================================================================
+$footer-bg-color: $primary-color !default;
+
+
+// 22. Flow Text
+// ==========================================================================
+$range : $large-screen - $small-screen !default;
+$intervals: 20 !default;
+$interval-size: $range / $intervals !default;

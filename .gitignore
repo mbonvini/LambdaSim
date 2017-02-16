@@ -4,3 +4,5 @@ venv
 *.pyc
 *.zip
 *.json
+node_modules/
+build/
