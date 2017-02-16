@@ -20,7 +20,7 @@ PATH_CONFIG_FILE=$(APP_DIR)/$(CONFIG_FILE)
 VENV_ZIP=LambdaFmiVenvPython27.zip
 VENV_ZIP_URL=https://s3-us-west-2.amazonaws.com/lambda-sim/$(VENV_ZIP)
 
-APP_ZIP_NAME=$(CURDIR)/LambdaSimApp.zip
+APP_ZIP_NAME=$(APP_DIR)/LambdaSimApp.zip
 LAMBDA_FUNCTION=lambda_function.py
 HANDLER=lambda_function.lambda_handler
 LS_LOG_LEVEL="10"
@@ -36,7 +36,9 @@ IAM_ROLE_ACCESS_LOGS_POLICY_DOCUMENT=role_access_logs_policy.json
 METHOD_OPTIONS_RESPONSE=file://configs/method_options_response.json
 INTEGRATION_OPTIONS_RESPONSE=file://configs/integration_options_response.json
 CORS_HEADERS=file://configs/cors_headers.json
+
 SWAGGER_API_TEMPLATE=$(CURDIR)/templates/swagger_api_template.json
+SWAGGER_API_TEMPLATE_CORS=$(CURDIR)/templates/swagger_api_template_cors.json
 
 # Access the data in the config file associated to the app
 #-- Account
@@ -57,6 +59,7 @@ endef
 
 all: help
 .PHONY: all
+
 
 install: ## Install the dependencies needed to run this tool
 	virtualenv ./venv

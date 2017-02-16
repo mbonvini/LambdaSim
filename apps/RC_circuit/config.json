@@ -6,7 +6,8 @@
     "function_name": "rc_circuit",
     "timeout": 60,
     "description": "A simple function that simulates an RC circuit",
-    "memory_size": 256
+    "memory_size": 256,
+    "access_control_allow_origin": "*"
   },
   "model":{
     "fmu_name": "SimpleElectrical_Examples_RC.fmu",

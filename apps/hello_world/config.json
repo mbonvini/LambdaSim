@@ -6,7 +6,8 @@
     "function_name": "hello_world",
     "timeout": 60,
     "description": "A simple function that simulates a first order model",
-    "memory_size": 128
+    "memory_size": 128,
+    "access_control_allow_origin": "*"
   },
   "api": {
     "name": "hello_world_rest_api",

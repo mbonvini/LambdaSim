@@ -64,6 +64,15 @@ logging.basicConfig(
 logging.info("Open config file {}".format(CONFIG_FILE))
 app_config = json.loads(open(CONFIG_FILE).read())
 
+
+# Get the access control allow origin that is places in the header of the
+# HTTP responses.
+try:
+    ACCESS_CONTROL_ALLOW_ORIGIN = app_config["lambda"]["access_control_allow_origin"]
+except (KeyError, ValueError) as err:
+    ACCESS_CONTROL_ALLOW_ORIGIN = '*'
+
+
 # Get the name of the S3 bucket containing the FMU
 # from the environmental variable S3_FMU_BUCKET_NAME
 if S3_FMU_BUCKET_NAME not in os.environ:
@@ -182,6 +191,7 @@ def respond(err, res="", content_type=APPLICATION_JSON):
         'body': err.dumps() if err else res,
         'headers': {
             'Content-Type': content_type,
+            'Access-Control-Allow-Origin': ACCESS_CONTROL_ALLOW_ORIGIN
         },
     }
 

@@ -6,7 +6,8 @@
     "function_name": "<NAME OF THE LAMBDA FUNCTION TO CREATE>",
     "timeout": <int: THE TIMEOUT FOR THE LAMBDA FUNCTION IN SECONDS>,
     "description": "<DESCRIPTION FOR THE LAMBDA FUNCTION>",
-    "memory_size": <int: THE MEMORY OF THE INSTANCE WHERE THE LAMBDA FUNCTION IS EXECUTED (MUST BE A MULTIPLE OF 128)>
+    "memory_size": <int: THE MEMORY OF THE INSTANCE WHERE THE LAMBDA FUNCTION IS EXECUTED (MUST BE A MULTIPLE OF 128)>,
+    "access_control_allow_origin": "*"
   },
   "model":{
     "fmu_name": "<THE NAME OF THE FMU>",

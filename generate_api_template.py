@@ -8,7 +8,7 @@ from jinja2 import Template
 
 CURDIR = os.path.abspath(os.path.dirname(__file__))
 
-TEMPLATE_FILE = os.path.join(CURDIR, "templates", "swagger_api_template.json")
+TEMPLATE_FILE = os.path.join(CURDIR, "templates", "swagger_api_template_cors.json")
 """
 Template for the REST API using Swagger format
 """
