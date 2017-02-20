@@ -230,7 +230,7 @@ def post_handler(event, context):
     # Validate the ``start_time``
     try:
         start_time = float(body["start_time"])
-        if start_time < MIN_SIM_TIME or start_time > MIN_SIM_TIME:
+        if start_time < MIN_SIM_TIME or start_time > MAX_SIM_TIME:
             raise ValueError()
     except KeyError:
         return respond(ErrorMessage(STATUS_BAD_REQUEST, "Missing parameter 'start_time'"))
