@@ -132,6 +132,7 @@ for d, dirs, files in os.walk('.'):
             continue
 
 import numpy as np
+import pyfmi
 from pyfmi import load_fmu
 
 logging.info("Load FMU model {}".format(LOCAL_FMU_PATH))
@@ -274,7 +275,32 @@ def post_handler(event, context):
     # Force the option that keeps the outputs in memory
     opts["result_handling"] = "memory"
 
-    # @TODO: Set the model parameters
+    # Set the model parameters
+    if "parameters" in body:
+        for (par_name, par_value) in body["parameters"].iteritems():
+            try:
+                value_reference = model.get_variable_valueref(par_name)
+                var_type = model.get_variable_data_type(par_name)
+
+                if var_type == pyfmi.fmi.FMI_REAL:
+                    model.set_real([value_reference], [float(par_value)])
+                elif var_type == pyfmi.fmi.FMI_INTEGER:
+                    model.set_integer([value_reference], [int(par_value)])
+                elif var_type == pyfmi.fmi.FMI_BOOLEAN:
+                    model.set_boolean([value_reference], [bool(par_value)])
+                elif var_type == pyfmi.fmi.FMI_ENUMERATION:
+                    model.set_integer([value_reference], [int(par_value)])
+                elif var_type == pyfmi.fmi.FMI_STRING:
+                    model.set_string([value_reference], [str(par_value)])
+                else:
+                    msg = "Invalid variable type for parameter {}".format(par_name)
+                    return respond(ErrorMessage(STATUS_BAD_REQUEST, msg))
+            except Exception, e:
+                msg = "Error while setting parameter {}={}. {}".format(
+                    par_name, par_value, str(e)
+                )
+                return respond(ErrorMessage(STATUS_BAD_REQUEST, msg))
+
     # @TODO: Set the states
     # @TODO: Build an input matrix if needed
     input_tuple = ()

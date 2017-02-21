@@ -20,7 +20,7 @@ PATH_CONFIG_FILE=$(APP_DIR)/$(CONFIG_FILE)
 VENV_ZIP=LambdaFmiVenvPython27.zip
 VENV_ZIP_URL=https://s3-us-west-2.amazonaws.com/lambda-sim/$(VENV_ZIP)
 
-APP_ZIP_NAME=$(APP_DIR)/LambdaSimApp.zip
+APP_ZIP_NAME=$(CURDIR)/LambdaSimApp.zip
 LAMBDA_FUNCTION=lambda_function.py
 HANDLER=lambda_function.lambda_handler
 LS_LOG_LEVEL="10"
