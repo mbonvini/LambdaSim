@@ -14,3 +14,9 @@ export function updatePlotFilterString(filterStr){
     filterStr
   }
 }
+
+export function resetPlotResults(){
+  return {
+    type: types.RESET_PLOT_RESULTS
+  }
+}

@@ -23,6 +23,9 @@ const modelSimulationReducer = function(state = initialState, action) {
             results: action.response
         });
 
+    case types.RESET_SIMULATION_RESULTS:
+      return Object.assign({}, initialState);
+
     default:
       return Object.assign({}, state);
     

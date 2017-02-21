@@ -2,8 +2,8 @@ import React from 'react';
 import { Router, Route, browserHistory, IndexRoute, Redirect } from 'react-router';
 
 import MainLayout from './layouts/main-layout';
-
 import HomeContainer from './containers/home-container';
+import AboutView from './views/about.js';
 
 // Set the routes associated to the layouts and pages
 // Look at this when deploying to S3
@@ -12,6 +12,7 @@ export default (
   <Router history={browserHistory}>
     <Route component={MainLayout}>
       <Route path="/" component={HomeContainer} />
+      <Route path="/about" component={AboutView} />
       <Redirect from="/*" to="/" />
     </Route>
   </Router>

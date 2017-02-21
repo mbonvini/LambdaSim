@@ -39,6 +39,9 @@ const plotResultsReducer = function(state = initialState, action) {
     case types.UPDATE_PLOT_FILTER_STRING:
       return Object.assign({}, state, {filterString: action.filterStr});
 
+    case types.RESET_PLOT_RESULTS:
+      return Object.assign({}, initialState);
+
     default:
       return Object.assign({}, state);
     

@@ -10,3 +10,9 @@ export function saveSimulationResults(startTime, finalTime, simOptions, paramete
     response
   };
 }
+
+export function resetSimulationResults(){
+  return {
+    type: types.RESET_SIMULATION_RESULTS
+  };
+}

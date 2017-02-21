@@ -22,7 +22,7 @@ class TabInfo extends React.Component {
             <li>run simulations and visualize the data</li>
           </ol>
         </div>
-        <div className="col s7">
+        <div className="col s7" style={{marginTop:20}}>
           <img className="responsive-img"
           src="https://github.com/mbonvini/LambdaSim/raw/master/images/diagram.png" />
         </div>

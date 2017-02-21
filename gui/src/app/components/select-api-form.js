@@ -63,10 +63,7 @@ class SelectApiForm extends React.Component {
           />
         </div>
         <div>
-          <RaisedButton label="RESET"
-            type="button" onClick={reset}
-            style={btnStyle} secondary={true}/>
-          <RaisedButton label="CLEAR"
+          <RaisedButton label="CLEAR ALL"
             type="button" onClick={clear}
             style={btnStyle} secondary={true}/>
           <RaisedButton label="CANCEL"

@@ -28,9 +28,8 @@ class Footer extends React.Component {
               <div className="col l4 offset-l2 s12">
                 <h5 className="">Links</h5>
                 <ul>
+                  <li><Link to="/" className="">Home</Link></li>
                   <li><Link to="/about" className="">About</Link></li>
-                  <li><Link to="/terms_and_conditions" className="">Terms and Conditions</Link></li>
-                  <li><Link to="/faq" className="">FAQ</Link></li>
                 </ul>
               </div>
             </div>
