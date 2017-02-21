@@ -7,8 +7,3 @@ body {
   line-height: 20px;
   margin: 0px;
 }
-
-@font-face {
-  font-family: logoFont;
-  src: url(/fonts/Barrio/Barrio-regular.ttf);
-}

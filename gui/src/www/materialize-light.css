@@ -1962,10 +1962,6 @@ html {
 *, *:before, *:after {
   box-sizing: inherit; }
 
-@font-face {
-  font-family: logoFont;
-  src: url(/fonts/Barrio/Barrio-regular.ttf); }
-
 ul:not(.browser-default) {
   padding-left: 0;
   list-style-type: none; }
