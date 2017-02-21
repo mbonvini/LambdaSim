@@ -6,12 +6,9 @@ import store from '../store';
 
 const HomeContainer = React.createClass({
 
-  componentDidMount: function() {
-  },
-
   render: function() {
     return (
-      <HomeView model={this.props.model} />
+      <HomeView error={this.props.error} homeTabs={this.props.homeTabs} {...this.props}/>
     );
   }
 
@@ -19,7 +16,8 @@ const HomeContainer = React.createClass({
 
 const mapStateToProps = function(store) {
   return {
-    model: store.model
+    error: store.error,
+    homeTabs: store.homeTabs
   };
 };
 

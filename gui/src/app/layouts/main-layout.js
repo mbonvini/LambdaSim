@@ -9,7 +9,7 @@ const MainLayout = React.createClass({
 				<div style={{position: 'fixed', width:'100%', top:0, zIndex: 997}}>
 					<NavbarContainer/>
 				</div>
-				<div className="container" style={{paddingTop: 60, minHeight: 500}}>
+				<div className="" style={{paddingTop: 60, minHeight: 500}}>
 	    		{this.props.children}
 	    	</div>
 	    	<Footer />

@@ -9,20 +9,26 @@ class Footer extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col l6 s12">
-                <h5 className="">λ-Sim</h5>
-                  <p className="">
-                    allows you to create a REST API from
-                    a simulation models. For more info
-                    go to Github
-                    at <b><a target="_blank" href="https://github.com/mbonvini/LambdaSim">mbonvini/LambdaSim</a></b>.
-                  </p>
+                <p className="">
+                  With <b>λ-Sim</b> you can create a REST API from
+                  a simulation models. For more info
+                  go to <b><a target="_blank" href="https://github.com/mbonvini/LambdaSim">github.com/mbonvini/LambdaSim</a></b>.
+                </p>
+                <a className="github-button"
+                href="https://github.com/mbonvini/LambdaSim"
+                data-icon="octicon-star"
+                data-style="mega"
+                data-count-href="/mbonvini/LambdaSim/stargazers"
+                data-count-api="/repos/mbonvini/LambdaSim#stargazers_count"
+                data-count-aria-label="# stargazers on GitHub"
+                aria-label="Star mbonvini/LambdaSim on GitHub">
+                  Star
+                </a>
               </div>
               <div className="col l4 offset-l2 s12">
                 <h5 className="">Links</h5>
                 <ul>
                   <li><Link to="/about" className="">About</Link></li>
-                  <li><Link to="/contact_us" className="">Contact Us</Link></li>
-                  <li><Link to="/privacy_policy" className="">Privacy policy</Link></li>
                   <li><Link to="/terms_and_conditions" className="">Terms and Conditions</Link></li>
                   <li><Link to="/faq" className="">FAQ</Link></li>
                 </ul>

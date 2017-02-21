@@ -54,3 +54,10 @@ export function updateFilterContinuous(isChecked){
     isChecked
   };
 }
+
+export function updateFilterHidden(isChecked){
+  return {
+    type: types.UPDATE_FILTER_HIDDEN,
+    isChecked
+  };
+}

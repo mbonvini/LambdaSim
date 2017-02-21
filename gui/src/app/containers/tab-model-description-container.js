@@ -23,6 +23,7 @@ class TabModelDescriptionContainer extends React.Component {
       filterInputs={this.props.filterInputs}
       filterOutputs={this.props.filterOutputs}
       filterContinuous={this.props.filterContinuous}
+      filterHidden={this.props.filterHidden}
       {...this.props} />
     );
   }
@@ -31,13 +32,14 @@ class TabModelDescriptionContainer extends React.Component {
 
 const mapStateToProps = function(store) {
   return {
-    modelDescription: store.model.description,
-    filterStr: store.model.filterStr,
-    filterParameters: store.model.filterParameters,
-    filterConstants: store.model.filterConstants,
-    filterInputs: store.model.filterInputs,
-    filterOutputs: store.model.filterOutputs,
-    filterContinuous: store.model.filterContinuous
+    modelDescription: store.modelDescription.description,
+    filterStr: store.modelDescription.filterStr,
+    filterParameters: store.modelDescription.filterParameters,
+    filterConstants: store.modelDescription.filterConstants,
+    filterInputs: store.modelDescription.filterInputs,
+    filterOutputs: store.modelDescription.filterOutputs,
+    filterContinuous: store.modelDescription.filterContinuous,
+    filterHidden: store.modelDescription.filterHidden
   };
 };
 

@@ -5,6 +5,13 @@ import log from 'loglevel';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import TabSimulationContainer from '../containers/tab-simulation-container';
 import TabModelDescriptionContainer from '../containers/tab-model-description-container';
+import Snackbar from 'material-ui/Snackbar';
+
+import { resetErrorMessage } from '../actions/error-message-actions';
+import { selectTab } from '../actions/home-tabs-actions';
+import TabInfo from '../components/tab-info';
+import { setApiSettingsUrl } from '../actions/api-settings-actions';
+import { getModelDescription } from '../api/lambda-sim-api';
 
 const containerStyle = {
   marginTop: 20,
@@ -17,32 +24,43 @@ class HomeView extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      value: 'model_description',
-    };
   }
 
-  handleChange = (value) => {
-    this.setState({
-      value: value,
-    });
-  };
-
+  componentDidMount(){
+     if(Object.assign({}, self.props.location.query).hasOwnProperty('api')){
+       const url = self.props.location.query.api;
+       store.dispatch(setApiSettingsUrl(url));
+       getModelDescription();
+     }
+  }
 
   render() {
     self = this;
     return (
       <div className="row" style={containerStyle}>
-        <Tabs
-          value={this.state.value}
-          onChange={this.handleChange}>
-          <Tab label="Model description" value="model_description" >
-            <TabModelDescriptionContainer />
-          </Tab>
-          <Tab label="Simulate" value="simulate">
-            <TabSimulationContainer />
-          </Tab>
-        </Tabs>
+        <div className="col s12 ">
+          <Tabs
+            value={this.props.homeTabs.tabSelected}
+            onChange={(value) => {store.dispatch(selectTab(value));}}>
+            <Tab label="Info" value="info" >
+              <TabInfo />
+            </Tab>
+            <Tab label="Model description" value="model_description" >
+              <TabModelDescriptionContainer />
+            </Tab>
+            <Tab label="Simulate" value="simulate">
+              <TabSimulationContainer />
+            </Tab>
+          </Tabs>
+        </div>
+        <Snackbar
+          open={this.props.error.message ? true : false}
+          message={this.props.error.message || '' }
+          autoHideDuration={10000}
+          style={{ pointerEvents: 'none', whiteSpace: 'nowrap' }}
+          bodyStyle={{ pointerEvents: 'initial', maxWidth: 'none' }}
+          onRequestClose={(reason) => {store.dispatch(resetErrorMessage());}}
+        />
       </div >
     )
   }

@@ -1,9 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
-import muiThemeable from 'material-ui/styles/muiThemeable';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
-import FlatButton from 'material-ui/FlatButton';
-import Badge from 'material-ui/Badge';
+import muiThemeable from 'material-ui/styles/muiThemeable';
 import Dialog from 'material-ui/Dialog';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -12,16 +10,12 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import log from 'loglevel';
-import ActionLockOutline from 'material-ui/svg-icons/action/lock-outline';
-import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
-import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
-import ActionList from 'material-ui/svg-icons/action/list';
-import TextField from 'material-ui/TextField';
 
 import store from '../store';
 import SelectApiForm from './select-api-form';
 import { setApiSettingsUrl, resetApiSettings } from '../actions/api-settings-actions';
 import { getModelDescription } from '../api/lambda-sim-api';
+import LoadingSpinnerContainer from '../containers/loading-spinner-container';
 
 function handleTouchTap() {
   alert('onTouchTap triggered on the title component');
@@ -52,7 +46,7 @@ class Navbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      openMenu: false,
       openDialog: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -77,16 +71,12 @@ class Navbar extends React.Component {
     this.handleCloseDialog();
   };
 
-  toggleMenu = () => this.setState({ open: !this.state.open });
+  toggleMenu = () => this.setState({ openMenu: !this.state.openMenu });
 
   toolBarHeaderMenu = () => (
     <ToolbarGroup firstChild={true}>
-      <IconButton onClick={this.toggleMenu}><MoreVertIcon /></IconButton>
       <Link to="/">
-        <img src="/images/Lambda-logo.svg" height="50px" style={{ margin: 10 }} />
-      </Link>
-      <Link to="/">
-        <ToolbarTitle text={"Sim"} style={titleStyle(this.props.muiTheme.palette)} />
+        <img src="/images/lsim-icon-small.png" height="50px" style={{ margin: 10 }} />
       </Link>
     </ToolbarGroup>
   );
@@ -123,11 +113,9 @@ class Navbar extends React.Component {
 
           <ToolbarGroup lastChild={true} style={{ float: "right" }}>
             <code>
-              {
-                this.props.apiSettings.url && (
+              {this.props.apiSettings.url && (
                   this.props.apiSettings.url
-                 )
-              }
+              )}
             </code>
             <ToolbarSeparator />
             <RaisedButton
@@ -135,14 +123,16 @@ class Navbar extends React.Component {
               secondary={true}
               onTouchTap={this.handleOpenDialog}
             />
+
+            <LoadingSpinnerContainer />
           </ToolbarGroup>
 
-          <Drawer open={this.state.open} docked={true} disableSwipeToOpen={true} width={280}>
+          <Drawer open={this.state.openMenu} docked={true} disableSwipeToOpen={true} width={300}>
             <Toolbar style={style(this.props.muiTheme.palette)}>
               {this.toolBarHeaderMenu()}
             </Toolbar>
-
           </Drawer>
+
         </Toolbar>
       </div>
     );

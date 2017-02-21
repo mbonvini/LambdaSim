@@ -7,15 +7,16 @@ const initialState = {
   description: null,
   filterStr: null,
   filterParameters: true,
-  filterConstants: false,
+  filterConstants: true,
   filterInputs: true,
   filterOutputs: true,
-  filterContinuous: true
+  filterContinuous: true,
+  filterHidden: false
 };
 
 const parse = new DOMParser();
 
-const modelReducer = function(state = initialState, action) {
+const modelDescriptionReducer = function(state = initialState, action) {
   switch(action.type) {
     
     case types.SET_MODEL_DESCRIPTION:
@@ -44,6 +45,9 @@ const modelReducer = function(state = initialState, action) {
     case types.UPDATE_FILTER_CONTINUOUS:
       return Object.assign({}, state, { filterContinuous: action.isChecked});
 
+    case types.UPDATE_FILTER_HIDDEN:
+      return Object.assign({}, state, { filterHidden: action.isChecked});
+
     default:
       return Object.assign({}, state);
     
@@ -52,4 +56,4 @@ const modelReducer = function(state = initialState, action) {
 
 }
 
-export default modelReducer;
+export default modelDescriptionReducer;

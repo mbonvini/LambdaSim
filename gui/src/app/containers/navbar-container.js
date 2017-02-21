@@ -5,12 +5,9 @@ import log from 'loglevel';
 
 const NavbarContainer = React.createClass({
 
-  componentDidMount: function() {
-  },
-
   render: function() {
     return (
-      <Navbar apiSettings={this.props.apiSettings} />
+      <Navbar apiSettings={this.props.apiSettings} loading={this.props.loading}/>
     );
   }
 
@@ -19,6 +16,7 @@ const NavbarContainer = React.createClass({
 const mapStateToProps = function(store) {
   return {
     apiSettings: store.apiSettings,
+    loading: store.loading
   };
 };
 
