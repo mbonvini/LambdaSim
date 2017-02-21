@@ -1,7 +1,26 @@
 # λ-Sim
-Convert simulation models to REST APIs
+
+λ-Sim is a tool that converts simulation models into REST APIs.
+The figure below gives an idea of what the tool does for you
+
+1. It takes a simulation model exported from Matlab or a Modelica
+tool and a JSON configuration file,
+2. it automatically generates a lambda function that simulates the model
+and it's exposed via a REST API that is available to any application
+that talks HTTP.
 
 ![λ-Sim Schematic diagram](https://github.com/mbonvini/LambdaSim/raw/master/images/diagram.png)
+
+With λ-Sim you can build a MaaS (Model as a Service) application where
+people can access your model, run simulations and visualize the results.
+
+λ-Sim is built on top of AWS [Lambda](https://aws.amazon.com/lambda/),
+[API-gateway](https://aws.amazon.com/api-gateway/), [S3](https://aws.amazon.com/s3/)
+and [Cloudwatch](https://aws.amazon.com/cloudwatch/).
+These AWS services allows you to build an application that automatically manages
+security updates, handle incoming traffic and scale as needed, monitor performances,
+and if necessary applies restrictions and limits to users.
+And for all of this there is no charge when your code is not running.
 
 ## Disclaimer
 
@@ -9,7 +28,7 @@ Convert simulation models to REST APIs
 Amazon Web Services (AWS) such as
 - lambda
 - apigateway,
-- S3,
+- S3, and
 - cloudwatch
 
 **YOU MAY ENCOUNTER EXPENSES WHEN USING AWS SERVICE**
@@ -69,10 +88,11 @@ for more info.
 
 ### Python and virtualenv
 
-λ-Sim uses some Python packages and tool to interact with AWS service.
+λ-Sim uses Python packages and tools to interact with AWS service.
 The λ-Sim dependencies are automatically installed in a virtual environment.
-If you don't have [Python](https://www.python.org/) and [virtualenv](https://virtualenv.pypa.io/en/latest/)
-you have to install them before using λ-Sim.
+If you don't have [Python](https://www.python.org/) and
+[virtualenv](https://virtualenv.pypa.io/en/latest/) you have to install
+them before using λ-Sim.
 
 ## Installation
 
@@ -115,13 +135,14 @@ the lambda function is created and is available at runtime.
 
 ### Create the lambda function
 
-To create the AWS lamnda function that runs simulation of your FMU
+To create the AWS lamnda function that runs simulation of your FMU model
 run this command
 
     make create_function APP_DIR=./apps/<YOUR_APP>
 
 where `APP_DIR` is the path of the application folder (the one that contains
-the `*.fmu` and the `config.json` file).
+the `*.fmu` and the `config.json` file) **without** the trailing slash, i.e.
+`./apps/hello_world` and not `./apps/hello_world/`.
 
 This command performs the following actions
 
