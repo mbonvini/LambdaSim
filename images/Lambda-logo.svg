@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created using Karbon14, part of koffice: http://www.koffice.org/karbon -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="242.28999"
+   height="241"
+   id="svg2222"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docname="lambda.svg"
+   sodipodi:docbase="/home/bluestorm/Images/wikipedia"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/bluestorm/Images/wikipedia/lambda.png"
+   inkscape:export-xdpi="16.996386"
+   inkscape:export-ydpi="16.996386"
+   version="1.0">
+  <metadata
+     id="metadata2231">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="945"
+     inkscape:window-width="1272"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="1.5949214"
+     inkscape:cx="284.21678"
+     inkscape:cy="101.51269"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:current-layer="svg2222"
+     width="242.29px"
+     height="241px" />
+  <defs
+     id="defs2224" />
+  <g
+     id="g3206"
+     transform="matrix(1.0000515,0,0,0.9675554,-62.095133,-284.30405)">
+    <g
+       transform="translate(-149.22366,-23.198636)"
+       id="Layer">
+      <path
+         style="fill:none;stroke-width:1.62144005"
+         d="M 367.925,541.272 C 310.98,562.689 247.17,536.395 221.846,481.077 C 196.522,425.758 218.316,360.276 271.74,331.167 C 325.165,302.059 392.004,319.248 424.756,370.52 C 457.508,421.791 445.006,489.663 396.136,525.901 L 367.925,541.272 z "
+         id="path4116" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:7;stroke-linecap:round;stroke-linejoin:round"
+         d="M 296.857,395.789 C 299.714,385.074 312.571,366.503 331.143,414.36 C 349.714,462.217 346.857,509.36 369.714,487.931"
+         id="path15895" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:8.22684956;stroke-linecap:round"
+         d="M 335.315,433.759 L 299.113,489.247"
+         id="path15897" />
+    </g>
+    <path
+       id="path2233"
+       d="M 295.93935,419.7269 C 295.93935,480.64025 245.51931,530.07717 183.39462,530.07717 C 121.26993,530.07717 70.849892,480.64025 70.849892,419.7269 C 70.849892,358.81355 121.26993,309.37663 183.39462,309.37663 C 245.51931,309.37663 295.93935,358.81355 295.93935,419.7269 z "
+       style="opacity:1;fill:#ff0000;fill-opacity:0;fill-rule:evenodd;stroke:#000000;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+</svg>
