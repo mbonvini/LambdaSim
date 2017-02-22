@@ -21,6 +21,7 @@ import { resetSimulationResults } from '../actions/model-simulation-actions';
 import { resetPlotResults } from '../actions/plot-results-actions';
 import { selectTab } from '../actions/home-tabs-actions';
 import LoadingSpinnerContainer from '../containers/loading-spinner-container';
+import { basePath } from '../router';
 
 function handleTouchTap() {
   alert('onTouchTap triggered on the title component');
@@ -85,8 +86,8 @@ class Navbar extends React.Component {
 
   toolBarHeaderMenu = () => (
     <ToolbarGroup firstChild={true}>
-      <Link to="/">
-        <img src="/images/lsim-icon-small.png" height="50px" style={{ margin: 10 }} />
+      <Link to={basePath+"/"}>
+        <img src={basePath+"/images/lsim-icon-small.png"} height="50px" style={{ margin: 10 }} />
       </Link>
     </ToolbarGroup>
   );

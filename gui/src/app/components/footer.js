@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import { basePath } from '../router';
 
 class Footer extends React.Component {
 
@@ -28,7 +29,7 @@ class Footer extends React.Component {
               <div className="col l4 offset-l2 s12">
                 <h5 className="">Links</h5>
                 <ul>
-                  <li><Link to="/" className="">Home</Link></li>
+                  <li><Link to={basePath+"/"} className="">Home</Link></li>
                   <li><Link to="/about" className="">About</Link></li>
                 </ul>
               </div>
