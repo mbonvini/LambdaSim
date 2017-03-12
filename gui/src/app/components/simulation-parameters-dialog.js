@@ -71,7 +71,7 @@ class SimulationParametersDialog extends React.Component {
                     style={{width: 350}}
                     onChange={(e) => store.dispatch(updateParametersFilterString(e.target.value))}
                 />
-                <Table selectable={false}>
+                <Table selectable={false} height="300">
                     <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
                         <TableRow>
                             <TableHeaderColumn>Name</TableHeaderColumn>
