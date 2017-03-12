@@ -5,6 +5,7 @@ import random
 import boto3
 import re
 import argparse
+import json
 
 BUCKET_PREFIX = "lambda-simulation"
 DEFAULT_AWS_REGION = "us-west-2"
@@ -110,7 +111,8 @@ def copy_fmu(dir_path, bucket_name, profile_name=None):
     parameter bucket_name.
 
     :param str dir_path: The name of the directory that contains
-      the FMU to copy.
+      the FMU to copy, the config.json file, and the input folder
+      with all the csv files.
     :param str bucket_name: The name of the S3 bucket.
     :param str prefix: The prefix for the S3 bucket to delete.
     :param str profile_name: The profile to use from the AWS
@@ -131,12 +133,49 @@ def copy_fmu(dir_path, bucket_name, profile_name=None):
         msg = "The path {} is not a directory".format(dir_path)
         raise ValueError(msg)
 
+    config_file_path = os.path.join(os.path.abspath(dir_path), "config.json")
+    if not os.path.exists(config_file_path):
+        msg = "The folder {} does not contain the 'config.json' file".format(
+            dir_path
+        )
+        raise ValueError(msg)
+
+    with open(config_file_path, "r") as c_file:
+        config = json.loads(c_file.read())
+
+    try:
+        s3_sub_folder = config["s3"]["folder"]
+    except KeyError:
+        msg = "The 'config.json' file does not contain the s3 folder name"
+        raise ValueError(msg)
+
+    if not re.match(r"^[\w|\d]+", s3_sub_folder):
+        msg = "The s3 folder name '{}' is not valid (only letters, underscores and numbers)."
+        raise ValueError(msg)
+
     fmus = [f for f in os.listdir(dir_path) if f.endswith("fmu")]
 
     for fmu in fmus:
         fmu_path = os.path.join(os.path.abspath(dir_path), fmu)
-        print "Copy {}...".format(fmu)
-        s3.Object(bucket_name, fmu).put(Body=open(fmu_path, 'rb'))
+        bucket_file = "{}/{}".format(s3_sub_folder, fmu)
+        print "Copy {}... to s3://{}/{}".format(fmu, bucket_name, bucket_file)
+        s3.Object(bucket_name, bucket_file).put(Body=open(fmu_path, 'rb'))
+        print "Done"
+
+    input_files_folder = os.path.join(os.path.abspath(dir_path), "inputs")
+    if not os.path.exists(input_files_folder):
+        print "No input files, skip"
+        return
+    elif not os.path.isdir(input_files_folder):
+        msg = "The input files folder path {} is not a directory".format(input_files_folder)
+        raise ValueError(msg)
+
+    input_csv_files = [f for f in os.listdir(input_files_folder) if f.endswith("csv")]
+    for csv_file in input_csv_files:
+        csv_file_path = os.path.join(os.path.abspath(input_files_folder), csv_file)
+        bucket_file = "{}/inputs/{}".format(s3_sub_folder, csv_file)
+        print "Copy {}... to s3://{}/{}".format(csv_file, bucket_name, bucket_file)
+        s3.Object(bucket_name, bucket_file).put(Body=open(csv_file_path, 'rb'))
         print "Done"
 
 

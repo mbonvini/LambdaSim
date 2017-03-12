@@ -9,8 +9,14 @@
     "memory_size": <int: THE MEMORY OF THE INSTANCE WHERE THE LAMBDA FUNCTION IS EXECUTED (MUST BE A MULTIPLE OF 128)>,
     "access_control_allow_origin": "*"
   },
+  "s3": {
+    "folder": "<str: NAME OF THE S3 SUBFOLDER WHERE THE FMU AND OTHER ASSETS WILL BE COPIED>"
+  },
   "model":{
-    "fmu_name": "<THE NAME OF THE FMU>",
+    "fmu_name": "<str: THE NAME OF THE FMU>",
+    "input_files": [
+      "<input_file_1.csv>", ..., "<input_file_n.csv>"
+    ],
     "options": {},
     "simulation_time": {
       "min": 0.0,
@@ -20,14 +26,6 @@
       "default": 500,
       "min": 300,
       "max": 1000
-    },
-    "params": {
-      "whitelist": null,
-      "blacklist": null
-    },
-    "variables": {
-      "whitelist": null,
-      "blacklist": null
     }
   }
 }

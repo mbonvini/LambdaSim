@@ -9,8 +9,12 @@
     "memory_size": 256,
     "access_control_allow_origin": "*"
   },
+  "s3": {
+    "folder": "rc_circuit"
+  },
   "model":{
     "fmu_name": "SimpleElectrical_Examples_RC.fmu",
+    "input_files": [],
     "options": {},
     "simulation_time": {
       "min": 0.0,
@@ -20,14 +24,6 @@
       "default": 200,
       "min": 100,
       "max": 500
-    },
-    "params": {
-      "whitelist": null,
-      "blacklist": null
-    },
-    "variables": {
-      "whitelist": null,
-      "blacklist": null
     }
   }
 }

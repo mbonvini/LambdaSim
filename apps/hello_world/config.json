@@ -9,12 +9,16 @@
     "memory_size": 128,
     "access_control_allow_origin": "*"
   },
+  "s3": {
+    "folder": "hello_world"
+  },
   "api": {
     "name": "hello_world_rest_api",
     "description": "An API gateway for lambda function hello_world"
   },
   "model":{
     "fmu_name": "HelloWorld.fmu",
+    "input_files": [],
     "options": {},
     "simulation_time": {
       "min": 0.0,
@@ -24,14 +28,6 @@
       "default": 500,
       "min": 300,
       "max": 1000
-    },
-    "params": {
-      "whitelist": null,
-      "blacklist": null
-    },
-    "variables": {
-      "whitelist": null,
-      "blacklist": null
     }
   }
 }
