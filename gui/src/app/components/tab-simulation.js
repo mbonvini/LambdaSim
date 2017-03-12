@@ -70,7 +70,8 @@ class TabSimulation extends React.Component {
                         <SimulateForm
                           onSubmit={this.runSimulation}
                           openSettingsDialog={this.openSettingsDialog}
-                          openParametersDialog={this.openParametersDialog}/>
+                          openParametersDialog={this.openParametersDialog}
+                          showParametersButton={true}/>
                         <PlotContainer />
                     </div>
 

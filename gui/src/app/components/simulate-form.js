@@ -68,9 +68,11 @@ class SimulateForm extends React.Component {
           onClick={openSettingsDialog}
           disabled={true}
           style={btnStyle}/>
+          { this.props.showParametersButton &&
           <RaisedButton label='Parameters' secondary={true}
           onClick={openParametersDialog}
           style={btnStyle}/>
+          }
         </div>
       </form>
     )
