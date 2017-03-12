@@ -109,7 +109,7 @@ class TabModelDescription extends React.Component {
                                 e => this.filterVariable(e)
                             ).map(
                                 (variable) => 
-                                <TableRow key={variable.valueReference}>
+                                <TableRow key={variable.name}>
                                     <TableRowColumn>{variable.name}</TableRowColumn>
                                     <TableRowColumn>{variable.variability}</TableRowColumn>
                                     <TableRowColumn>{variable.causality}</TableRowColumn>
