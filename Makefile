@@ -15,6 +15,7 @@ AWS=$(VENV_DIR)/bin/aws --profile=$(PROFILE)
 
 APP_DIR=$(CURDIR)/apps/hello_world
 CONFIG_FILE=config.json
+DASHBOARD_FILE=dashboard.json
 PATH_CONFIG_FILE=$(APP_DIR)/$(CONFIG_FILE)
 
 VENV_ZIP=LambdaFmiVenvPython27.zip
@@ -102,6 +103,7 @@ build_app: ## Builds the zip file that contains the lambda function
 	cp ./$(VENV_ZIP) $(APP_ZIP_NAME)
 	zip -g $(APP_ZIP_NAME) $(LAMBDA_FUNCTION)
 	cd $(APP_DIR) && zip -g $(APP_ZIP_NAME) $(CONFIG_FILE)
+	if [ -f "$(APP_DIR)/$(DASHBOARD_FILE)" ]; then cd $(APP_DIR) && zip -g $(APP_ZIP_NAME) $(DASHBOARD_FILE); fi
 .PHONY: build_app
 
 
@@ -169,22 +171,22 @@ submit_api_spec: prepare_api_spec
 	--body file://$(APP_DIR)/rest_api_spec.json > $(APP_DIR)/rest_api.json
 
 get_function_arn_uri: ## Get the ARN and URI of the lambda function
-	$(eval FUNCTION_ARN := $(shell more $(APP_DIR)/lambda_function.json | jq '.FunctionArn' | sed 's/^"\(.*\)".*/\1/'))
-	$(eval FUNCTION_URI := arn:aws:apigateway:$(AWS_REGION):lambda:path/2015-03-31/functions/$(FUNCTION_ARN)/invocations)
+	@$(eval FUNCTION_ARN := $(shell more $(APP_DIR)/lambda_function.json | jq '.FunctionArn' | sed 's/^"\(.*\)".*/\1/'))
+	@$(eval FUNCTION_URI := arn:aws:apigateway:$(AWS_REGION):lambda:path/2015-03-31/functions/$(FUNCTION_ARN)/invocations)
 .PHONY: get_function_arn_uri
 
 get_root_resource_id: ## Get the REST root resource
-	$(eval REST_API_ID := $(shell more $(APP_DIR)/rest_api.json | jq '.id'))
-	$(AWS) apigateway get-resources \
+	@$(eval REST_API_ID := $(shell more $(APP_DIR)/rest_api.json | jq '.id'))
+	@$(AWS) apigateway get-resources \
 	--region $(AWS_REGION) \
 	--rest-api-id $(REST_API_ID) > $(APP_DIR)/resources.json
 .PHONY: get_resource_id
 
 
 get_resource_id: get_root_resource_id ## Get the resource id of the "/" and of "/<lambda_function_name>"
-	$(eval REST_API_ID := $(shell more $(APP_DIR)/rest_api.json | jq '.id' | sed 's/^"\(.*\)".*/\1/'))
-	$(eval ROOT_RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.path == "/") | .id'))
-	$(eval RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.parentId == $(ROOT_RESOURCE_ID)) | .id'))
+	@$(eval REST_API_ID := $(shell more $(APP_DIR)/rest_api.json | jq '.id' | sed 's/^"\(.*\)".*/\1/'))
+	@$(eval ROOT_RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.path == "/") | .id'))
+	@$(eval RESOURCE_ID := $(shell more $(APP_DIR)/resources.json | jq '.items[] | select(.parentId == $(ROOT_RESOURCE_ID)) | .id'))
 .PHONY: get_resource_id
 
 

@@ -10,18 +10,24 @@ import errorMessageReducer from './error-message-reducer';
 import homeTabsReducer from './home-tabs-reducer';
 import plotResultsReducer from './plot-results-reducer';
 import modelParametersReducer from './model-parameters-reducer';
+import dashboardDefinitionReducer from './dashboard-definition-reducer';
+import configDefinitionreducer from './config-definition-reducer';
+import modelInputReducer from './model-inputs-reducer';
 
 // Combine Reducers
 var reducers = combineReducers({
     apiSettings: apiSettingsReducer,
     modelDescription: modelDescriptionReducer,
     modelSimulation: modelSimulationReducer,
+    modelInput: modelInputReducer,
     form: formReducer,
     loading: loadingReducer,
     error: errorMessageReducer,
     homeTabs: homeTabsReducer,
     plotVariables: plotResultsReducer,
-    modelParameters: modelParametersReducer
+    modelParameters: modelParametersReducer,
+    dashboardDefinition: dashboardDefinitionReducer,
+    configDefinition: configDefinitionreducer
 });
 
 export default reducers;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import TabSimulation from '../components/tab-simulation';
+import TabDashboard from '../components/tab-dashboard';
 import log from 'loglevel';
 import store from '../store';
 
-class TabSimulationContainer extends React.Component {
+class TabDashboardContainer extends React.Component {
 
   constructor(props) {
     super(props);
@@ -12,10 +12,11 @@ class TabSimulationContainer extends React.Component {
 
   render() {
     return (
-      <TabSimulation
+      <TabDashboard
         modelDescription={this.props.modelDescription}
         modelSimulation={this.props.modelSimulation}
         plotVariables={this.props.plotVariables}
+        dashboard={this.props.dashboard}
         inputFileName={this.props.inputFileName}
         {...this.props}
       />
@@ -30,8 +31,9 @@ const mapStateToProps = function(store) {
     modelSimulation: store.modelSimulation,
     plotVariables: store.plotVariables.plotVariables,
     modelParameters: store.modelParameters,
+    dashboard: store.dashboardDefinition.dashboard,
     inputFileName: store.modelInput.fileName
   };
 };
 
-export default connect(mapStateToProps)(TabSimulationContainer);
+export default connect(mapStateToProps)(TabDashboardContainer);

@@ -18,6 +18,7 @@ LEVEL = logging.WARNING
 LOG_FORMAT = "%(asctime)s %(message)s"
 LOG_DATE_FORMAT = "%m/%d/%Y %I:%M:%S %p"
 CONFIG_FILE = "./config.json"
+DASHBOARD_FILE = "./dashboard.json"
 TMP_DIR = os.path.join("/", "tmp")
 FMU_LOG_FILE = os.path.join(TMP_DIR, "log.txt")
 APPLICATION_JSON = "application/json"
@@ -66,6 +67,13 @@ logging.basicConfig(
 logging.info("Open config file {}".format(CONFIG_FILE))
 app_config = json.loads(open(CONFIG_FILE).read())
 
+
+# If exists load the dashboard config file
+logging.info("Open dashboard definition file {}".format(DASHBOARD_FILE))
+if os.path.exists(DASHBOARD_FILE):
+    dashboard_definition = json.loads(open(DASHBOARD_FILE).read())
+else:
+    dashboard_definition = None
 
 # Get the access control allow origin that is places in the header of the
 # HTTP responses.
@@ -230,8 +238,19 @@ def get_handler(event, context):
         "config" in event["queryStringParameters"] and \
         event["queryStringParameters"]["config"].lower() == "true"
 
+    return_json_dashboard = event["queryStringParameters"] is not None and \
+        "dashboard" in event["queryStringParameters"] and \
+        event["queryStringParameters"]["dashboard"].lower() == "true"
+
     if return_json_config:
         return respond(None, json.dumps(app_config))
+    elif return_json_dashboard:
+        if dashboard_definition is None:
+            return respond(
+                ErrorMessage(404, "Dashboard definition file not found")
+            )
+        else:
+            return respond(None, json.dumps(dashboard_definition))
     else:
         with open(LOCAL_FMU_DESCRIPTION_FILE, "r") as xml_file:
             return respond(None, xml_file.read(), content_type=APPLICATION_XML)

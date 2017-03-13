@@ -52,11 +52,12 @@ class TabSimulation extends React.Component {
     }
 
     runSimulation = (data) => {
-        const simOptions = {ncp: 100};
+        const simOptions = {};
         const parameters = this.props.modelParameters.parameters;
+        const inputFileName = this.props.inputFileName;
         const startTime = +data.startTime;
         const finalTime = +data.finalTime;
-        simulateModel(startTime, finalTime, simOptions, parameters);
+        simulateModel(startTime, finalTime, simOptions, parameters, inputFileName);
     };
 
     render = () => {

@@ -14,7 +14,7 @@ import log from 'loglevel';
 import store from '../store';
 import SelectApiForm from './select-api-form';
 import { setApiSettingsUrl, resetApiSettings } from '../actions/api-settings-actions';
-import { getModelDescription } from '../api/lambda-sim-api';
+import { getModelDescription, getModelConfig, getModelDashboard } from '../api/lambda-sim-api';
 import { resetModelParameters } from '../actions/model-parameters-actions';
 import { resetModelDescription } from '../actions/model-actions';
 import { resetSimulationResults } from '../actions/model-simulation-actions';
@@ -22,6 +22,9 @@ import { resetPlotResults } from '../actions/plot-results-actions';
 import { selectTab } from '../actions/home-tabs-actions';
 import LoadingSpinnerContainer from '../containers/loading-spinner-container';
 import { basePath } from '../router';
+import { resetConfigDefinition } from '../actions/config-actions';
+import { resetDashboardDefinition } from '../actions/dashboard-actions';
+import { resetInputFile } from '../actions/model-input-actions';
 
 function handleTouchTap() {
   alert('onTouchTap triggered on the title component');
@@ -61,6 +64,8 @@ class Navbar extends React.Component {
   handleSubmit = (data) => {
     store.dispatch(setApiSettingsUrl(data.url));
     getModelDescription();
+    getModelConfig();
+    getModelDashboard();
     this.handleCloseDialog();
   };
 
@@ -76,8 +81,11 @@ class Navbar extends React.Component {
     store.dispatch(resetApiSettings());
     store.dispatch(resetModelParameters());
     store.dispatch(resetModelDescription());
+    store.dispatch(resetInputFile());
     store.dispatch(resetSimulationResults());
     store.dispatch(resetPlotResults());
+    store.dispatch(resetConfigDefinition());
+    store.dispatch(resetDashboardDefinition());
     store.dispatch(selectTab('info'));
     this.handleCloseDialog();
   };

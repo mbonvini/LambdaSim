@@ -4,6 +4,7 @@ import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import Chip from 'material-ui/Chip';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import {
     Table, TableBody, TableRow, TableRowColumn,
     TableHeader, TableHeaderColumn
@@ -41,11 +42,20 @@ class SimulationParametersDialog extends React.Component {
     };
 
     render = () => {
+        const actions = [
+            <FlatButton
+                label="OK"
+                primary={true}
+                keyboardFocused={true}
+                onTouchTap={this.props.onClose}
+            />
+        ];
         return (
             <Dialog
                 title="Parameters"
                 modal={false}
                 open={this.props.open}
+                actions={actions}
                 onRequestClose={this.props.onClose}
             >
                 <div style={styles.wrapper}>

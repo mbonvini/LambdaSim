@@ -1,9 +1,10 @@
 import React from 'react';
 import log from 'loglevel';
 import RaisedButton from 'material-ui/RaisedButton';
-import { Field, reduxForm } from 'redux-form';
+import { Field, SelectField, reduxForm } from 'redux-form';
 import store from '../store';
-import { renderTextField } from './constants';
+import { renderTextField, renderSelectField } from './constants';
+import SimulationInputsDialogContainer from '../containers/simulation-inputs-dialog-container';
 
 const btnStyle = {
   marginTop: 0,
@@ -73,6 +74,8 @@ class SimulateForm extends React.Component {
           onClick={openParametersDialog}
           style={btnStyle}/>
           }
+
+          <SimulationInputsDialogContainer />
         </div>
       </form>
     )

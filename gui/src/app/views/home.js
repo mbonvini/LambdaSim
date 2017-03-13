@@ -4,6 +4,7 @@ import store from '../store';
 import log from 'loglevel';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import TabSimulationContainer from '../containers/tab-simulation-container';
+import TabDashboardContainer from '../containers/tab-dashboard-container';
 import TabModelDescriptionContainer from '../containers/tab-model-description-container';
 import Snackbar from 'material-ui/Snackbar';
 
@@ -11,7 +12,7 @@ import { resetErrorMessage } from '../actions/error-message-actions';
 import { selectTab } from '../actions/home-tabs-actions';
 import TabInfo from '../components/tab-info';
 import { setApiSettingsUrl } from '../actions/api-settings-actions';
-import { getModelDescription } from '../api/lambda-sim-api';
+import { getModelDescription, getModelConfig, getModelDashboard } from '../api/lambda-sim-api';
 
 const containerStyle = {
   marginTop: 20,
@@ -31,6 +32,8 @@ class HomeView extends React.Component {
        const url = self.props.location.query.api;
        store.dispatch(setApiSettingsUrl(url));
        getModelDescription();
+       getModelConfig();
+       getModelDashboard();
      }
   }
 
@@ -44,6 +47,9 @@ class HomeView extends React.Component {
             onChange={(value) => {store.dispatch(selectTab(value));}}>
             <Tab label="Info" value="info" >
               <TabInfo />
+            </Tab>
+            <Tab label="Dashboard" value="dashboard">
+              <TabDashboardContainer />
             </Tab>
             <Tab label="Model description" value="model_description" >
               <TabModelDescriptionContainer />

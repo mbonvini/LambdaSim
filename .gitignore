@@ -6,3 +6,4 @@ venv
 *.json
 node_modules/
 build/
+*.log

@@ -17,14 +17,16 @@ const ModelParametersReducer = function(state = initialState, action) {
       const voidValue = action.newValue === null || action.newValue === undefined ||
         action.newValue.replace(/ /g,'') === '';
       const validNumber = !voidValue && !isNaN(+action.newValue);
-      const isPresent = action.name in state.parameters;
       const areEqual = +action.defaultValue === +action.newValue;
 
-      if(voidValue && isPresent){
-        // Remove the parameter
-        let res = Object.assign({}, state);
-        delete res.parameters[action.name];
-        return res;
+      if(voidValue){
+        const isPresent = action.name in state.parameters;
+        if(isPresent){
+          // Remove the parameter
+          let res = Object.assign({}, state);
+          delete res.parameters[action.name];
+          return res;
+        }
       }else if (validNumber){
         // Add/modify parameter to the state
         let newState = {
@@ -35,8 +37,6 @@ const ModelParametersReducer = function(state = initialState, action) {
           }
         }
         return newState;
-      } else {
-        return Object.assign({}, state);
       }
 
     case types.REMOVE_MODEL_PARAMETER:
