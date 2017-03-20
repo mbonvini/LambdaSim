@@ -1,0 +1,36 @@
+{
+  "aws":{
+    "region": "us-west-1"
+  },
+  "lambda":{
+    "function_name": "simple_building",
+    "timeout": 60,
+    "description": "A model of a single room building",
+    "memory_size": 256,
+    "access_control_allow_origin": "*"
+  },
+  "s3": {
+    "folder": "simple_building"
+  },
+  "model":{
+    "fmu_name": "SimpleBuilding_Room.fmu",
+    "input_files": [
+      "SFO_weather_data_summer.csv",
+      "SFO_weather_data_winter.csv"
+    ],
+    "options": {
+      "ncp": 500,
+      "CVode_options": {"atol": 0.000001, "rtol": 0.0001},
+      "filter": ["Tair*", "Troom*", "Twall*", "T_*", "SolRad*", "Q*", "Tsp"]
+    },
+    "simulation_time": {
+      "min": 0.0,
+      "max": 2592000.0
+    },
+    "n_points": {
+      "default": 200,
+      "min": 100,
+      "max": 5000
+    }
+  }
+}

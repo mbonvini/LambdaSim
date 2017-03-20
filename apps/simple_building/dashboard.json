@@ -1,0 +1,311 @@
+[
+    [{
+        "col_class": "col m5",
+        "widgets": [{
+            "wtype": "html",
+            "content": [
+                "<h5>A simple building model</h5>",
+                "<p>This model represents a simple building located in San Francisco",
+                " whose temperature is controlled according to a time-varying",
+                " set point.</p>",
+                "<p>You can change the set point, the wall orientation or the building",
+                " materials and see how they impact the heating/cooling required to ",
+                "maintain comfort in the building."
+            ]
+        }]
+    },
+    {
+        "col_class": "col m7",
+        "widgets": [{
+            "wtype": "image",
+            "src": "https://github.com/mbonvini/ModelicaInAction/raw/master/ipynotebooks/images/simpleBuilding.png",
+            "caption": "Schematic diagram of the model"
+        }]
+    }],
+    [{
+        "col_class": "col m4",
+        "widgets": [{
+            "wtype": "text_field",
+            "name": "Night temperature [C]",
+            "param": {"name": "Tnight", "default": 18, "min": 16, "max": 26}
+        },
+        {
+            "wtype": "text_field",
+            "name": "Day temperature  [C]",
+            "param": {"name": "Tday", "default": 20, "min": 16, "max": 26}
+        },
+        {
+            "wtype": "text_field",
+            "name": "Day start time [h]",
+            "param": {"name": "TimeDay", "default": 8, "min": 5.5, "max": 10}
+        },
+        {
+            "wtype": "text_field",
+            "name": "Night start time [h]",
+            "param": {"name": "TimeNight", "default": 19, "min": 17, "max": 21}
+        },
+        {
+            "wtype": "text_field",
+            "name": "Rise time [min]",
+            "param": {"name": "RiseTime", "default": 2, "min": 1, "max": 60}
+        },
+        {
+            "wtype": "text_field",
+            "name": "Control system time constant [min]",
+            "param": {"name": "tau", "default": 10, "min": 2, "max": 20}
+        }]
+    },{
+        "col_class": "col m8",
+        "widgets": [{
+            "wtype": "plot",
+            "data": [
+                {
+                    "x": "$result.time",
+                    "y": "$result.Tsp",
+                    "mode": "lines",
+                    "name": "Set point",
+                    "line": {"color": "#6C7A89", "dash": "dash"}
+                },
+                {
+                    "x": "$result.time",
+                    "y": "$result.Troom",
+                    "mode": "lines",
+                    "name": "T room",
+                    "line": {"color": "#E08A1E"}
+                },
+                {
+                    "x": "$result.time",
+                    "y": "$result.T_dry_bulb",
+                    "mode": "lines",
+                    "name": "T air",
+                    "line": {"color": "#1F4788"}
+                }
+            ],
+            "layout": {
+                "title": "Set point, room and outside temperatures",
+                "xaxis": {"title": "Time [s]"},
+                "yaxis": {"title": "Temperature"},
+                "showlegend": true
+            }
+        }]
+    }],
+    [{
+        "col_class": "col m4",
+        "widgets": [{
+            "wtype": "select_field",
+            "name": "Wall orientation",
+            "options":[
+                {
+                    "display_name": "S",
+                    "params": {"wall_azimuth": 0}
+                },
+                {
+                    "display_name": "N",
+                    "params": {"wall_azimuth": 180}
+                },
+                {
+                    "display_name": "W",
+                    "params": {"wall_azimuth": -90}
+                },
+                {
+                    "display_name": "E",
+                    "params": {"wall_azimuth": 90}
+                }
+            ]
+        },
+        {
+            "wtype": "select_field",
+            "name": "Layer 1 (external)",
+            "options":[
+                {
+                    "display_name": "Brick (5cm)",
+                    "params": {"l[1]": 0.05, "r[1]": 1.12, "cp[1]": 790, "d[1]": 1920}
+                },
+                {
+                    "display_name": "Concrete (10cm)",
+                    "params": {"l[1]": 0.1, "r[1]": 0.714, "cp[1]":840, "d[1]": 2240}
+                }
+            ]
+        },
+        {
+            "wtype": "select_field",
+            "name": "Layer 2",
+            "options":[
+                {
+                    "display_name": "Insulation Board (5cm)",
+                    "params": {"l[2]": 0.05, "r[2]": 33.3, "cp[2]": 1200, "d[2]": 40}
+                },
+                {
+                    "display_name": "Styrofoam (6cm)",
+                    "params": {"l[2]": 0.06, "r[2]": 28.6, "cp[2]": 1300, "d[2]": 35}
+                },
+                {
+                    "display_name": "Gypsum Board (6cm)",
+                    "params": {"l[2]": 0.06, "r[2]": 6.25, "cp[2]": 1090, "d[2]": 800}
+                },
+                {
+                    "display_name": "Plywood (6cm)",
+                    "params": {"l[2]": 0.06, "r[2]": 8.33, "cp[2]": 1210, "d[2]": 540}
+                }
+            ]
+        },
+        {
+            "wtype": "select_field",
+            "name": "Layer 3",
+            "options":[
+                {
+                    "display_name": "Hardwoods (oak, maple)",
+                    "params": {"l[3]": 0.01, "r[3]": 6.25, "cp[3]": 1255, "d[3]": 720}
+                },
+                {
+                    "display_name": "Softwoods (fir, pine)",
+                    "params": {"l[3]": 0.01, "r[3]": 8.33, "cp[3]": 1380, "d[3]": 510}
+                },
+                {
+                    "display_name": "Gypsum plaster, sand aggregate (0.6cm)",
+                    "params": {"l[3]": 0.006, "r[3]": 4.54, "cp[3]": 1085, "d[3]": 10680}
+                }
+            ]
+        },
+        {
+            "wtype": "select_field",
+            "name": "Layer 4 (internal)",
+            "options":[
+                {
+                    "display_name": "Plaster (0.3cm)",
+                    "params": {"l[4]": 0.003, "r[4]": 800, "cp[4]": 1000, "d[4]": 800}
+                },
+                {
+                    "display_name": "Paint (0.05cm)",
+                    "params": {"l[4]": 0.005, "r[4]": 800, "cp[4]": 1000, "d[4]": 800}
+                }
+            ]
+        }]
+    },
+    {
+        "col_class": "col m8",
+        "widgets": [{
+            "wtype": "plot",
+            "data": [
+                {
+                    "x": "$result.time",
+                    "y": "$result.Twall[1]",
+                    "mode": "lines",
+                    "name": "T wall 1",
+                    "line": {"color": "#c0392b"}
+                },
+                {
+                    "x": "$result.time",
+                    "y": "$result.Twall[2]",
+                    "mode": "lines",
+                    "name": "T wall 2",
+                    "line": {"color": "#e74c3c"}
+                },
+                {
+                    "x": "$result.time",
+                    "y": "$result.Twall[3]",
+                    "mode": "lines",
+                    "name": "T wall 3",
+                    "line": {"color": "#d35400"}
+                },
+                {
+                    "x": "$result.time",
+                    "y": "$result.Twall[4]",
+                    "mode": "lines",
+                    "name": "T wall 4",
+                    "line": {"color": "#e67e22"}
+                }
+            ],
+            "layout": {
+                "title": "Wall layers temperature",
+                "xaxis": {"title": "Time [s]"},
+                "yaxis": {"title": "Temperature"},
+                "showlegend": true
+            }
+        }]
+    }],
+    [{
+        "col_class": "col m12",
+        "widgets": [{
+            "wtype": "plot",
+            "data": [
+                {
+                    "x": "$result.time",
+                    "y": "$result.Qcool",
+                    "mode": "lines",
+                    "name": "Q cool",
+                    "line": {"color": "#2980b9"}
+                },
+                {
+                    "x": "$result.time",
+                    "y": "$result.Qheat",
+                    "mode": "lines",
+                    "name": "Q heat",
+                    "line": {"color": "#e74c3c"}
+                }
+            ],
+            "layout": {
+                "title": "Cooling and heating power",
+                "xaxis": {"title": "Time [s]"},
+                "yaxis": {"title": "Power"},
+                "showlegend": true
+            }
+        }]
+    }],
+    [{
+        "col_class": "col m12",
+        "widgets": [{
+            "wtype": "plot",
+            "data": [
+                {
+                    "x": "$result.T_dry_bulb",
+                    "y": "$result.Qcool",
+                    "mode": "markers",
+                    "name": "Q cool",
+                    "line": {"color": "#2980b9"}
+                },
+                {
+                    "x": "$result.T_dry_bulb",
+                    "y": "$result.Qheat",
+                    "mode": "markers",
+                    "name": "Q heat",
+                    "line": {"color": "#e74c3c"}
+                }
+            ],
+            "layout": {
+                "title": "Cooling & heating vs outside air temperature",
+                "xaxis": {"title": "Outside air temperature [C]"},
+                "yaxis": {"title": "Power [W]"},
+                "showlegend": true
+            }
+        }]
+    }],
+    [{
+        "col_class": "col m12",
+        "widgets": [{
+            "wtype": "plot",
+            "data": [
+                {
+                    "x": "$result.time",
+                    "y": "$result.SolRadWall",
+                    "mode": "lines",
+                    "name": "Solar rad. wall",
+                    "line": {"color": "#16a085"}
+                },
+                {
+                    "x": "$result.time",
+                    "y": "$result.SolRadWindow",
+                    "mode": "lines",
+                    "name": "Solar rad. window",
+                    "line": {"color": "#34495e", "opacity": 0.5}
+                }
+            ],
+            "layout": {
+                "title": "Solar radiation on wall and window",
+                "xaxis": {"title": "Time [s]"},
+                "yaxis": {"title": "Power"},
+                "showlegend": true
+            }
+        }]
+    }]
+]
