@@ -16,6 +16,7 @@ AWS=$(VENV_DIR)/bin/aws --profile=$(PROFILE)
 APP_DIR=$(CURDIR)/apps/hello_world
 CONFIG_FILE=config.json
 DASHBOARD_FILE=dashboard.json
+README_FILE=readme.md
 PATH_CONFIG_FILE=$(APP_DIR)/$(CONFIG_FILE)
 
 VENV_ZIP=LambdaFmiVenvPython27.zip
@@ -104,6 +105,7 @@ build_app: ## Builds the zip file that contains the lambda function
 	zip -g $(APP_ZIP_NAME) $(LAMBDA_FUNCTION)
 	cd $(APP_DIR) && zip -g $(APP_ZIP_NAME) $(CONFIG_FILE)
 	if [ -f "$(APP_DIR)/$(DASHBOARD_FILE)" ]; then cd $(APP_DIR) && zip -g $(APP_ZIP_NAME) $(DASHBOARD_FILE); fi
+	if [ -f "$(APP_DIR)/$(README_FILE)" ]; then cd $(APP_DIR) && zip -g $(APP_ZIP_NAME) $(README_FILE); fi
 .PHONY: build_app
 
 

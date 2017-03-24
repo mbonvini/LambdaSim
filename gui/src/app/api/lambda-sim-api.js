@@ -3,6 +3,7 @@ import store from '../store';
 import log from 'loglevel';
 import { setLoadingMessage, resetLoadingMessage } from '../actions/loading-actions';
 import { setErrorMessage } from '../actions/error-message-actions';
+import { setReadme } from '../actions/readme-actions';
 
 import { setModelDescription } from '../actions/model-actions';
 import { saveSimulationResults } from '../actions/model-simulation-actions';
@@ -50,8 +51,27 @@ export function getModelDashboard() {
       return response;
     })
     .catch((error) => {
-      const msg = 'Errors while getting the API Dashboard file. ';
-      store.dispatch(setErrorMessage(msg));
+      store.dispatch(resetLoadingMessage());
+      log.info(error);
+    });
+}
+
+/**
+ * This function generates a GET HTTP request to the API and it
+ * receives the markdown readme file.
+ */
+export function getReadme() {
+  const url = store.getState().apiSettings.url;
+  
+  store.dispatch(setLoadingMessage('Get readme...'));
+  return axios.get(url+"?readme=true")
+    .then((response) => {
+      store.dispatch(resetLoadingMessage());
+      store.dispatch(setReadme(response.data));
+      store.dispatch(selectTab('info'));
+      return response;
+    })
+    .catch((error) => {
       store.dispatch(resetLoadingMessage());
       log.info(error);
     });

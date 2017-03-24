@@ -250,3 +250,48 @@ Have a look at the following links in case you are more interested.
 
 - https://aws.amazon.com/lambda/faqs/
 - https://aws.amazon.com/api-gateway/faqs/
+
+
+### Simulation options
+
+More info here http://www.jmodelica.org/page/27667
+
+{'CVode_options': {'atol': 'Default',
+  'discr': 'BDF',
+  'external_event_detection': False,
+  'iter': 'Newton',
+  'rtol': 'Default'},
+ 'Dopri5_options': {'atol': 'Default', 'rtol': 'Default'},
+ 'ExplicitEuler_options': {},
+ 'ImplicitEuler_options': {},
+ 'LSODAR_options': {'atol': 'Default', 'rtol': 'Default'},
+ 'Radau5ODE_options': {'atol': 'Default', 'rtol': 'Default'},
+ 'RodasODE_options': {'atol': 'Default', 'rtol': 'Default'},
+ 'RungeKutta34_options': {'atol': 'Default', 'rtol': 'Default'},
+ 'extra_equations': None,
+ 'filter': None,
+ 'initialize': True,
+ 'logging': False,
+ 'ncp': 0,
+ 'result_file_name': '',
+ 'result_handler': None,
+ 'result_handling': 'file',
+ 'return_result': True,
+ 'sensitivities': None,
+ 'solver': 'CVode',
+ 'with_jacobian': False,
+ 'write_scaled_result': False}
+
+ Support the following widgets
+
+- text
+- image
+
+Support the following input widgets
+
+- textfield,
+- checkbox,
+- selectfield
+
+Support the following output widgets
+- plot

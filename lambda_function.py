@@ -19,10 +19,12 @@ LOG_FORMAT = "%(asctime)s %(message)s"
 LOG_DATE_FORMAT = "%m/%d/%Y %I:%M:%S %p"
 CONFIG_FILE = "./config.json"
 DASHBOARD_FILE = "./dashboard.json"
+README_FILE = "./readme.md"
 TMP_DIR = os.path.join("/", "tmp")
 FMU_LOG_FILE = os.path.join(TMP_DIR, "log.txt")
 APPLICATION_JSON = "application/json"
 APPLICATION_XML = "application/xml"
+TEXT_PLAIN = "text/plain"
 MODEL_DESCRIPTION_FILE = "modelDescription.xml"
 GET = "GET"
 POST = "POST"
@@ -74,6 +76,14 @@ if os.path.exists(DASHBOARD_FILE):
     dashboard_definition = json.loads(open(DASHBOARD_FILE).read())
 else:
     dashboard_definition = None
+
+
+# If exists load the readme.md file
+logging.info("Open {} file".format(README_FILE))
+if os.path.exists(README_FILE):
+    readme_content = open(README_FILE).read()
+else:
+    readme_content = None
 
 # Get the access control allow origin that is places in the header of the
 # HTTP responses.
@@ -231,8 +241,13 @@ def get_handler(event, context):
     This function handles HTTP GET requests.
     The function by default returns the XML model description
     file of the FMU.
+
     If the query parameter `?config=true` the function returns the
     JSON configuration of the lambda function and its API.
+    If the query parameter `?dashboard=true` the function returns (if present)
+    the JSON configuration of the dashboard.
+    If the query parameter `?readme=true` the function returns (if present)
+    the markdown readme file.
     """
     return_json_config = event["queryStringParameters"] is not None and \
         "config" in event["queryStringParameters"] and \
@@ -241,6 +256,10 @@ def get_handler(event, context):
     return_json_dashboard = event["queryStringParameters"] is not None and \
         "dashboard" in event["queryStringParameters"] and \
         event["queryStringParameters"]["dashboard"].lower() == "true"
+
+    return_readme_file = event["queryStringParameters"] is not None and \
+        "readme" in event["queryStringParameters"] and \
+        event["queryStringParameters"]["readme"].lower() == "true"
 
     if return_json_config:
         return respond(None, json.dumps(app_config))
@@ -251,6 +270,13 @@ def get_handler(event, context):
             )
         else:
             return respond(None, json.dumps(dashboard_definition))
+    elif return_readme_file:
+        if readme_content is None:
+            return respond(
+                ErrorMessage(404, "{} file not found".format(README_FILE))
+            )
+        else:
+            return respond(None, readme_content, content_type=TEXT_PLAIN)
     else:
         with open(LOCAL_FMU_DESCRIPTION_FILE, "r") as xml_file:
             return respond(None, xml_file.read(), content_type=APPLICATION_XML)

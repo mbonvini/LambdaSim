@@ -13,6 +13,7 @@ import modelParametersReducer from './model-parameters-reducer';
 import dashboardDefinitionReducer from './dashboard-definition-reducer';
 import configDefinitionreducer from './config-definition-reducer';
 import modelInputReducer from './model-inputs-reducer';
+import readmeReducer from './readme-reducer';
 
 // Combine Reducers
 var reducers = combineReducers({
@@ -27,7 +28,8 @@ var reducers = combineReducers({
     plotVariables: plotResultsReducer,
     modelParameters: modelParametersReducer,
     dashboardDefinition: dashboardDefinitionReducer,
-    configDefinition: configDefinitionreducer
+    configDefinition: configDefinitionreducer,
+    readme: readmeReducer
 });
 
 export default reducers;

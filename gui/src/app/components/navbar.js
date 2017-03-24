@@ -14,7 +14,8 @@ import log from 'loglevel';
 import store from '../store';
 import SelectApiForm from './select-api-form';
 import { setApiSettingsUrl, resetApiSettings } from '../actions/api-settings-actions';
-import { getModelDescription, getModelConfig, getModelDashboard } from '../api/lambda-sim-api';
+import { resetReadme } from '../actions/readme-actions';
+import { getModelDescription, getModelConfig, getModelDashboard, getReadme } from '../api/lambda-sim-api';
 import { resetModelParameters } from '../actions/model-parameters-actions';
 import { resetModelDescription } from '../actions/model-actions';
 import { resetSimulationResults } from '../actions/model-simulation-actions';
@@ -66,6 +67,7 @@ class Navbar extends React.Component {
     getModelDescription();
     getModelConfig();
     getModelDashboard();
+    getReadme(); 
     this.handleCloseDialog();
   };
 
@@ -86,6 +88,7 @@ class Navbar extends React.Component {
     store.dispatch(resetPlotResults());
     store.dispatch(resetConfigDefinition());
     store.dispatch(resetDashboardDefinition());
+    store.dispatch(resetReadme());
     store.dispatch(selectTab('info'));
     this.handleCloseDialog();
   };
