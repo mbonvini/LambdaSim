@@ -16,13 +16,13 @@ class Footer extends React.Component {
                   go to <b><a target="_blank" href="https://github.com/mbonvini/LambdaSim">github.com/mbonvini/LambdaSim</a></b>.
                 </p>
                 <a className="github-button"
-                href="https://github.com/mbonvini/LambdaSim"
-                data-icon="octicon-star"
-                data-style="mega"
-                data-count-href="/mbonvini/LambdaSim/stargazers"
-                data-count-api="/repos/mbonvini/LambdaSim#stargazers_count"
-                data-count-aria-label="# stargazers on GitHub"
-                aria-label="Star mbonvini/LambdaSim on GitHub">
+                  href="https://github.com/mbonvini/LambdaSim"
+                  data-icon="octicon-star"
+                  data-style="mega"
+                  data-count-href="/mbonvini/LambdaSim/stargazers"
+                  data-count-api="/repos/mbonvini/LambdaSim#stargazers_count"
+                  data-count-aria-label="# stargazers on GitHub"
+                  aria-label="Star mbonvini/LambdaSim on GitHub">
                   Star
                 </a>
               </div>
@@ -30,7 +30,8 @@ class Footer extends React.Component {
                 <h5 className="">Links</h5>
                 <ul>
                   <li><Link to={basePath+"/"} className="">Home</Link></li>
-                  <li><Link to="/about" className="">About</Link></li>
+                  <li><Link to={basePath+"/api-docs"} className="">API Docs</Link></li>
+                  <li><Link to={basePath+"/about"} className="">About</Link></li>
                 </ul>
               </div>
             </div>

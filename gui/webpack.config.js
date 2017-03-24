@@ -7,15 +7,21 @@ var APP_DIR = path.resolve(__dirname, 'src/app');
 var config = {
     entry: APP_DIR + '/index.js',
     output: {
-	path: BUILD_DIR,
-	filename: 'bundle.js'
+		path: BUILD_DIR,
+		filename: 'bundle.js'
     },
     module : {
-	loaders : [
-	    {test : /\.jsx?/,
-	     include : APP_DIR,
-	     loader : 'babel'}
-	]
+		loaders : [
+			{
+				test : /\.jsx?/,
+				include : APP_DIR,
+				loader : 'babel'
+			},
+			{
+				test: /\.json$/,
+            	loader: 'json-loader'
+			}
+		]
     }
 };
 

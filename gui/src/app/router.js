@@ -4,6 +4,7 @@ import { Router, Route, browserHistory, Redirect } from 'react-router';
 import MainLayout from './layouts/main-layout';
 import HomeContainer from './containers/home-container';
 import AboutView from './views/about.js';
+import ApiDocsView from './views/api-docs.js';
 
 export const basePath = process.env.NODE_ENV === 'production' ? '/LambdaSim' : '';
 
@@ -15,6 +16,7 @@ export default (
     <Route component={MainLayout}>
       <Route path={basePath+"/"} component={HomeContainer} />
       <Route path={basePath+"/about"} component={AboutView} />
+      <Route path={basePath+"/api-docs"} component={ApiDocsView} />
       <Redirect from={basePath+"/*"} to={basePath+"/"} />
     </Route>
   </Router>

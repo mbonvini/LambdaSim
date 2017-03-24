@@ -55,7 +55,7 @@ class AboutView extends React.Component {
             And for all of this there is no charge when your code is not running.
           </p>
         </div>
-      </div >
+      </div>
     )
   }
 }
