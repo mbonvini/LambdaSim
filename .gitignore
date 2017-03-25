@@ -7,3 +7,4 @@ venv
 node_modules/
 build/
 *.log
+gui/src/www/*.css
