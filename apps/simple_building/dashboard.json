@@ -84,7 +84,7 @@
             "layout": {
                 "title": "Set point, room and outside temperatures",
                 "xaxis": {"title": "Time [s]"},
-                "yaxis": {"title": "Temperature"},
+                "yaxis": {"title": "Temperature [C]"},
                 "showlegend": true
             }
         }]
@@ -96,19 +96,19 @@
             "name": "Wall orientation",
             "options":[
                 {
-                    "display_name": "S",
+                    "display_name": "South",
                     "params": {"wall_azimuth": 0}
                 },
                 {
-                    "display_name": "N",
+                    "display_name": "North",
                     "params": {"wall_azimuth": 180}
                 },
                 {
-                    "display_name": "W",
+                    "display_name": "West",
                     "params": {"wall_azimuth": -90}
                 },
                 {
-                    "display_name": "E",
+                    "display_name": "East",
                     "params": {"wall_azimuth": 90}
                 }
             ]
@@ -118,11 +118,11 @@
             "name": "Layer 1 (external)",
             "options":[
                 {
-                    "display_name": "Brick (5cm)",
+                    "display_name": "Brick (5 cm)",
                     "params": {"l[1]": 0.05, "r[1]": 1.12, "cp[1]": 790, "d[1]": 1920}
                 },
                 {
-                    "display_name": "Concrete (10cm)",
+                    "display_name": "Concrete (10 cm)",
                     "params": {"l[1]": 0.1, "r[1]": 0.714, "cp[1]":840, "d[1]": 2240}
                 }
             ]
@@ -132,20 +132,20 @@
             "name": "Layer 2",
             "options":[
                 {
-                    "display_name": "Insulation Board (5cm)",
-                    "params": {"l[2]": 0.05, "r[2]": 33.3, "cp[2]": 1200, "d[2]": 40}
+                    "display_name": "Insulation Board (3 cm)",
+                    "params": {"l[2]": 0.03, "r[2]": 33.3, "cp[2]": 1200, "d[2]": 40}
                 },
                 {
-                    "display_name": "Styrofoam (6cm)",
-                    "params": {"l[2]": 0.06, "r[2]": 28.6, "cp[2]": 1300, "d[2]": 35}
+                    "display_name": "Styrofoam (3 cm)",
+                    "params": {"l[2]": 0.03, "r[2]": 28.6, "cp[2]": 1300, "d[2]": 35}
                 },
                 {
-                    "display_name": "Gypsum Board (6cm)",
-                    "params": {"l[2]": 0.06, "r[2]": 6.25, "cp[2]": 1090, "d[2]": 800}
+                    "display_name": "Gypsum Board (2 cm)",
+                    "params": {"l[2]": 0.02, "r[2]": 6.25, "cp[2]": 1090, "d[2]": 800}
                 },
                 {
-                    "display_name": "Plywood (6cm)",
-                    "params": {"l[2]": 0.06, "r[2]": 8.33, "cp[2]": 1210, "d[2]": 540}
+                    "display_name": "Plywood (2 cm)",
+                    "params": {"l[2]": 0.02, "r[2]": 8.33, "cp[2]": 1210, "d[2]": 540}
                 }
             ]
         },
@@ -154,16 +154,16 @@
             "name": "Layer 3",
             "options":[
                 {
-                    "display_name": "Hardwoods (oak, maple)",
+                    "display_name": "Hardwoods (1 cm)",
                     "params": {"l[3]": 0.01, "r[3]": 6.25, "cp[3]": 1255, "d[3]": 720}
                 },
                 {
-                    "display_name": "Softwoods (fir, pine)",
+                    "display_name": "Softwoods (1 cm)",
                     "params": {"l[3]": 0.01, "r[3]": 8.33, "cp[3]": 1380, "d[3]": 510}
                 },
                 {
-                    "display_name": "Gypsum plaster, sand aggregate (0.6cm)",
-                    "params": {"l[3]": 0.006, "r[3]": 4.54, "cp[3]": 1085, "d[3]": 10680}
+                    "display_name": "Gypsum plaster (0.6 cm)",
+                    "params": {"l[3]": 0.006, "r[3]": 4.54, "cp[3]": 1085, "d[3]": 1680}
                 }
             ]
         },
@@ -172,12 +172,12 @@
             "name": "Layer 4 (internal)",
             "options":[
                 {
-                    "display_name": "Plaster (0.3cm)",
-                    "params": {"l[4]": 0.003, "r[4]": 800, "cp[4]": 1000, "d[4]": 800}
+                    "display_name": "Plaster (0.3 cm)",
+                    "params": {"l[4]": 0.003, "r[4]": 4.54, "cp[4]": 1085, "d[4]": 800}
                 },
                 {
-                    "display_name": "Paint (0.05cm)",
-                    "params": {"l[4]": 0.005, "r[4]": 800, "cp[4]": 1000, "d[4]": 800}
+                    "display_name": "Sheeting (0.95 cm)",
+                    "params": {"l[4]": 0.0095, "r[4]": 1.2, "cp[4]": 1300, "d[4]": 300}
                 }
             ]
         }]
@@ -219,7 +219,7 @@
             "layout": {
                 "title": "Wall layers temperature",
                 "xaxis": {"title": "Time [s]"},
-                "yaxis": {"title": "Temperature"},
+                "yaxis": {"title": "Temperature [C]"},
                 "showlegend": true
             }
         }]
@@ -247,7 +247,7 @@
             "layout": {
                 "title": "Cooling and heating power",
                 "xaxis": {"title": "Time [s]"},
-                "yaxis": {"title": "Power"},
+                "yaxis": {"title": "Power [W]"},
                 "showlegend": true
             }
         }]
@@ -301,9 +301,9 @@
                 }
             ],
             "layout": {
-                "title": "Solar radiation on wall and window",
+                "title": "Solar power on wall and window",
                 "xaxis": {"title": "Time [s]"},
-                "yaxis": {"title": "Power"},
+                "yaxis": {"title": "Power [W]"},
                 "showlegend": true
             }
         }]
