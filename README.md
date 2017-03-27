@@ -35,9 +35,9 @@ For information and documentation check out the [wiki](https://github.com/mbonvi
 For comments and questions you can create an issue, contributions are
 welcome.
 
-## Aknowledgemnts
+## Aknowledgements
 
-I want to thanks [Modelon](http://www.modelon.com) for making available their tools,
+I's like to thank [Modelon](http://www.modelon.com) for making available their tools,
 without them this project wouldn't exist.
 
 ## Disclaimer
